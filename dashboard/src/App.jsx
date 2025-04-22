@@ -4,15 +4,15 @@ import Sidebar from "./components/Sidebar";
 import MainContent from "./components/MainContent";
 
 function App() {
-  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
 
-  const toggleSidebar = () => setSidebarVisible((prev) => !prev);
+  const toggleSidebar = () => setSidebarVisible(!sidebarVisible);
 
   return (
-    <div className="h-screen flex flex-col">
+ <div className="h-screen flex flex-col bg-white">
       <Header />
       <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 bg-white">
+        <div className="flex-1 overflow-auto bg-white">
           <MainContent />
         </div>
         <Sidebar visible={sidebarVisible} toggle={toggleSidebar} />
