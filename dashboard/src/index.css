@@ -73,8 +73,6 @@ header {
   border-color: 20px solid #2a2a2a;
   /* Add some padding */
   padding: 1em;
-  /* round the corners */
-  border-radius: 0 0 20px 20px;
 }
 
 
