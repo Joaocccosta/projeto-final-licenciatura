@@ -17,6 +17,23 @@ app.get('/api/status', (req, res) => {
   res.json({ message: 'API is running' });
 });
 
+// API Methods
+
+// Importing the routes from the routes folder
+const getlinesRouter = require('./routes/getLines.js');
+const getOEERouter = require('./routes/getOEE.js');
+const getEventTypesRouter = require('./routes/getEventTypes.js');
+const saveEventRouter = require('./routes/saveEvent.js');
+const getRefreshRouter = require('./routes/getRefresh.js');
+
+// Mounting the routers at their respective endpoints
+app.use('/api/getlines', getlinesRouter); // Mount the router at /api/getlines
+app.use('/api/getOEE', getOEERouter); // Mount the router at /api/getOEE
+app.use('/api/getEventTypes', getEventTypesRouter); // Mount the router at /api/getEventTypes
+app.use('/api/saveEvent', saveEventRouter); // Mount the router at /api/saveEvent
+app.use('/api/getRefresh', getRefreshRouter); // Mount the router at /api/getRefresh
+
+
 // get values from the database, using the file getValues.js that connects to the database and returns the values, that is inside the folder routes
 const valuesRouter = require('./routes/getValues.js'); // Rename variable for clarity
 app.use('/api/values', valuesRouter); // Mount the router at /api/values
@@ -27,6 +44,7 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 });
+
 
 // Beginning message
 app.listen(PORT, () => {
