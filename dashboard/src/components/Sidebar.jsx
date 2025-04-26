@@ -40,13 +40,14 @@ const Sidebar = ({ visible, toggle }) => {
 
             <label className="block mt-4 mb-2 text-sm">Tipo de incidente</label>
             <select
-              className="p-2"
+              className="p-2 bg-gray-700 text-white w-full rounded border border-gray-600 focus:outline-none focus:border-blue-500"
               value={selectedOption}
+              
               onChange={(e) => setSelectedOption(e.target.value)}
             >
-              <option value="">Selecione uma opção</option>
+              <option value="" className="text-gray-400">Selecione uma opção</option>
               {dropdownOptions.map((opt, idx) => (
-                <option key={idx} value={opt}>
+                <option key={idx} value={opt} className="bg-gray-700 text-white">
                   {opt}
                 </option>
               ))}
