@@ -1,18 +1,16 @@
 import { useEffect, useState } from "react";
-
-// Simple placeholder Card component (can be moved to its own file)
-const Card = ({ title, value }) => (
-  <div className="bg-gray-100 p-4 rounded-lg shadow text-center">
-    <h3 className="text-lg font-semibold text-gray-700 mb-2">{title}</h3>
-    <p className="text-3xl font-bold text-gray-900">{value}</p>
-  </div>
-);
+import CardUpgraded from './CardUpgraded'; // Import the new Card component
 
 const MainContent = () => {
   const [linhas, setLinhas] = useState([]);
   const [isFullscreen, setIsFullscreen] = useState(!!document.fullscreenElement);
   const [selectedLinha, setSelectedLinha] = useState("");
-  const [oeeData, setOeeData] = useState(Array(6).fill({ title: "OEE Metric", value: "N/A" })); // Placeholder data
+  const [oeeData, setOeeData] = useState([
+    { title: "Parts Goal View", status: "37s - Active", performancePercentage: 98, performanceLabel: "PARTS GOAL", performanceValue: "374 PARTS", additionalInfo: "FAU248: 7 parts behind", showChart: true },
+    { title: "OEE View", status: "1m - Active", performancePercentage: 102, performanceLabel: "OEE", performanceValue: "374 PARTS", additionalInfo: "FAU248: 8 parts ahead", showChart: true },
+    { title: "Utilization View", status: "1m - Active", performancePercentage: 95, performanceLabel: "UTILIZATION", showChart: true },
+    { title: "Downtime View", status: "3m - Active", performancePercentage: 92, performanceLabel: "IN-CYCLE", isDowntimeView: true },
+  ]);
 
   useEffect(() => {
     fetch("/api/linhas")
@@ -40,17 +38,21 @@ const MainContent = () => {
   useEffect(() => {
     if (selectedLinha) {
       console.log(`Fetching OEE data for linha: ${selectedLinha}`);
+      const fetchedData = [
+        { title: "CNC " + selectedLinha + " - Parts", status: "Fetching...", performancePercentage: 0, performanceLabel: "PARTS GOAL", performanceValue: "0 PARTS", additionalInfo: "Fetching...", showChart: true },
+        { title: "CNC " + selectedLinha + " - OEE", status: "Fetching...", performancePercentage: 0, performanceLabel: "OEE", performanceValue: "0 PARTS", additionalInfo: "Fetching...", showChart: true },
+        { title: "CNC " + selectedLinha + " - Utilization", status: "Fetching...", performancePercentage: 0, performanceLabel: "UTILIZATION", showChart: true },
+        { title: "CNC " + selectedLinha + " - Downtime", status: "Fetching...", performancePercentage: 0, performanceLabel: "IN-CYCLE", isDowntimeView: true },
+      ];
+      setOeeData(fetchedData);
+    } else {
       const placeholderData = [
-        { title: "Availability", value: "90%" },
-        { title: "Performance", value: "95%" },
-        { title: "Quality", value: "99%" },
-        { title: "OEE", value: "85%" },
-        { title: "Metric 5", value: "N/A" },
-        { title: "Metric 6", value: "N/A" },
+        { title: "Parts Goal View", status: "N/A", performancePercentage: 0, performanceLabel: "PARTS GOAL", performanceValue: "N/A", additionalInfo: "Select a line", showChart: true },
+        { title: "OEE View", status: "N/A", performancePercentage: 0, performanceLabel: "OEE", performanceValue: "N/A", additionalInfo: "Select a line", showChart: true },
+        { title: "Utilization View", status: "N/A", performancePercentage: 0, performanceLabel: "UTILIZATION", showChart: true },
+        { title: "Downtime View", status: "N/A", performancePercentage: 0, performanceLabel: "IN-CYCLE", isDowntimeView: true },
       ];
       setOeeData(placeholderData);
-    } else {
-      setOeeData(Array(6).fill({ title: "OEE Metric", value: "N/A" }));
     }
   }, [selectedLinha]);
 
@@ -162,9 +164,19 @@ const MainContent = () => {
         </select>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {oeeData.map((data, index) => (
-          <Card key={index} title={data.title} value={data.value} />
+          <CardUpgraded
+            key={index}
+            title={data.title}
+            status={data.status}
+            performancePercentage={data.performancePercentage}
+            performanceLabel={data.performanceLabel}
+            performanceValue={data.performanceValue}
+            additionalInfo={data.additionalInfo}
+            showChart={data.showChart}
+            isDowntimeView={data.isDowntimeView}
+          />
         ))}
       </div>
     </div>

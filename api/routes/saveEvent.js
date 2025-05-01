@@ -16,6 +16,28 @@ router.post('/', async (req, res) => {
 // URL: /api/saveEvent
 // BODY: { "event": { "lineId": "line1", "eventType": "type1", "timestamp": "2023-10-01T12:00:00Z, "comment": "...." } }
 
+/*
+const db = require('../db'); // Import your database connection
+
+async function saveEvent(event) {
+  const { lineId, eventType, timestamp, comment } = event;
+
+  // Get the eventTypeId from the EventTypes table
+  const [eventTypeRow] = await db.query('SELECT id FROM EventTypes WHERE typeName = ?', [eventType]);
+  if (!eventTypeRow) {
+    throw new Error('Invalid event type');
+  }
+
+  const eventTypeId = eventTypeRow.id;
+
+  // Insert the event into the Events table
+  await db.query(
+    'INSERT INTO Events (lineId, eventTypeId, timestamp, comment) VALUES (?, ?, ?, ?)',
+    [lineId, eventTypeId, timestamp, comment || null]
+  );
+}
+
+module.exports = saveEvent; */
 
 
 module.exports = router;
