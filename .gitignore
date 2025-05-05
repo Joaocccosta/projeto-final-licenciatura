@@ -7,3 +7,4 @@ dist
 
 # Docker
 *.log
+api/db.js
