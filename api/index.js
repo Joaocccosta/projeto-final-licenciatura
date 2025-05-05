@@ -25,6 +25,7 @@ const getOEERouter = require('./routes/getOEE.js');
 const getEventTypesRouter = require('./routes/getEventTypes.js');
 const saveEventRouter = require('./routes/saveEvent.js');
 const getRefreshRouter = require('./routes/getRefresh.js');
+const getOrderRouter = require('./routes/getOrder.js');
 
 // Mounting the routers at their respective endpoints
 app.use('/api/getlines', getlinesRouter); // Mount the router at /api/getlines
@@ -32,6 +33,7 @@ app.use('/api/getOEE', getOEERouter); // Mount the router at /api/getOEE
 app.use('/api/getEventTypes', getEventTypesRouter); // Mount the router at /api/getEventTypes
 app.use('/api/saveEvent', saveEventRouter); // Mount the router at /api/saveEvent
 app.use('/api/getRefresh', getRefreshRouter); // Mount the router at /api/getRefresh
+app.use('/api/getOrder', getOrderRouter); // Mount the router at /api/getOrder
 
 
 // get values from the database, using the file getValues.js that connects to the database and returns the values, that is inside the folder routes
