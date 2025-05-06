@@ -14,11 +14,19 @@ import path from 'path';
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}", // Garante que isto inclui os teus componentes
+  ],
+  theme: {
+    extend: {},
+  },
   plugins: [react(), tailwindcss(),],
   build: {
     outDir: 'dist',
   },
   server: {
+    host: '0.0.0.0',
     proxy: {
       '/api': 'http://localhost:3000',
     }

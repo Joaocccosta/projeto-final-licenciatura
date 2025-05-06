@@ -10,7 +10,6 @@ function App() {
 
   return (
  <div className="h-screen flex flex-col bg-white">
-      <Header />
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 overflow-auto bg-white">
           <MainContent />

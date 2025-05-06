@@ -22,7 +22,7 @@ const StateCard = ({ title, status }) => {
   }
 
   return (
-    <div className={`${bgColor} p-6 rounded-lg shadow-md text-white text-center flex flex-col justify-center items-center min-h-[120px]`}>
+    <div className={`${bgColor} p-6 rounded-lg shadow-md text-white text-center flex flex-col justify-between items-center min-h-[150px] w-[300px]`}> {/* Adicionado w-[300px] */}
       <h3 className="text-xl font-semibold mb-2 break-words">{title}</h3>
       <p className="text-2xl font-bold">{statusText}</p>
     </div>

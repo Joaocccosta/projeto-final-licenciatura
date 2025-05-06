@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import StateCard from './StateCard'; // Card para estado das partes
-import OrderCard from './OrderCard'; // Card para número da ordem
+import StateCard from './StateCard';
+import OrderCard from './OrderCard';
+import ProductionChartCard from './ProductionChartCard'; // Importar o novo card de gráfico
 
 const MainContent = () => {
   const [linhas, setLinhas] = useState([]);
   const [isFullscreen, setIsFullscreen] = useState(!!document.fullscreenElement);
   const [selectedLinha, setSelectedLinha] = useState("");
   const [cardsData, setCardsData] = useState([]);
-  const [currentOrder, setCurrentOrder] = useState(null);
 
   useEffect(() => {
     fetch("/api/getlines")
@@ -19,7 +19,7 @@ const MainContent = () => {
         if (data && data.lines && Array.isArray(data.lines)) {
           setLinhas(data.lines);
         } else {
-          console.error("Formato inesperado da resposta da API (esperado { lines: [...] }):", data);
+          console.error("Formato inesperado da API (getlines):", data);
           setLinhas([]);
         }
       })
@@ -44,59 +44,77 @@ const MainContent = () => {
   useEffect(() => {
     if (!selectedLinha) {
       setCardsData([]);
-      setCurrentOrder(null);
       return;
     }
 
     const machine = linhas.find(l => String(l.id) === selectedLinha);
     if (!machine) {
       setCardsData([]);
-      setCurrentOrder(null);
       return;
     }
 
     console.log(`Máquina selecionada: ${machine.nome}, Tipo: ${machine.tipo}`);
 
-    const fetchOrder = async () => {
+    const fetchOrderAndProductionData = async () => {
+      let orderCardInfo;
+      const partStateInfos = []; 
+
       try {
-        // --- 1. Buscar Ordem de Produção ---
-        const response = await fetch(`/api/getorder/${selectedLinha}`); // Chamada real
-        if (!response.ok) throw new Error('Erro ao buscar ordem');
-        const orderData = await response.json(); // { codigo_ordem: '...', data_inicio: '...' }
-
-        setCurrentOrder(orderData); // Guarda ambos os dados
-
-        // --- 2. Construir Cards de Estado das Partes ---
-        const partStateCards = [];
-        if (machine.tipo === 'rychiger') {
-          if (machine.parte1_nome) partStateCards.push({ type: 'state', id: `${machine.id}-p1`, title: machine.parte1_nome, status: machine.estado_parte1 });
-          if (machine.parte2_nome) partStateCards.push({ type: 'state', id: `${machine.id}-p2`, title: machine.parte2_nome, status: machine.estado_parte2 });
-          if (machine.parte3_nome) partStateCards.push({ type: 'state', id: `${machine.id}-p3`, title: machine.parte3_nome, status: machine.estado_parte3 });
+        const response = await fetch(`/api/getorder/${selectedLinha}`);
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            console.warn(`Nenhuma ordem encontrada para máquina ${selectedLinha}`);
+            orderCardInfo = { type: 'order', id: `${machine.id}-no-order`, orderCode: 'Nenhuma Ordem', data_inicio: null };
+          } else {
+            throw new Error(`Erro ${response.status} ao buscar ordem`);
+          }
         } else {
-          if (machine.parte1_nome) partStateCards.push({ type: 'state', id: `${machine.id}-p1`, title: machine.parte1_nome, status: machine.estado_parte1 });
+          const apiData = await response.json();
+          orderCardInfo = {
+            type: 'order',
+            id: `${machine.id}-order`,
+            orderCode: apiData.codigo_ordem,
+            data_inicio: apiData.data_inicio
+          };
         }
-        if (partStateCards.length === 0 && machine.parte1_nome === null && machine.parte2_nome === null && machine.parte3_nome === null) {
-          partStateCards.push({ type: 'state', id: `${machine.id}-no-parts`, title: "Máquina sem partes definidas", status: null });
-        }
-
-        // --- 3. Combinar Card da Ordem com Cards de Estado ---
-        const orderCardData = {
-          type: 'order',
-          id: `${machine.id}-order`,
-          orderCode: orderData.codigo_ordem,
-          data_inicio: orderData.data_inicio // Passa a data de início
-        };
-        setCardsData([orderCardData, ...partStateCards]);
-
       } catch (error) {
-        console.error("Erro ao buscar dados da ordem ou construir cards:", error);
-        setCurrentOrder({ codigo_ordem: 'Erro', data_inicio: null }); // Indica erro
-        setCardsData([{ type: 'order', id: `${machine.id}-order-error`, orderCode: 'Erro ao buscar', data_inicio: null }]);
+        console.error("Erro ao buscar dados da ordem:", error);
+        orderCardInfo = { type: 'order', id: `${machine.id}-order-error`, orderCode: 'Erro Fetch Ordem', data_inicio: null };
       }
+
+      // --- INÍCIO: DADOS FIXOS PARA O GRÁFICO DE PRODUÇÃO HORÁRIA (APENAS PARA TESTE) ---
+      const fixedHourlyTestData = [
+        { intervalo: "08:00-09:00", produzido: Math.floor(Math.random() * 500) + 1000 },
+        { intervalo: "09:00-10:00", produzido: Math.floor(Math.random() * 500) + 1200 },
+        { intervalo: "10:00-11:00", produzido: Math.floor(Math.random() * 500) + 1100 },
+        { intervalo: "11:00-12:00", produzido: Math.floor(Math.random() * 500) + 1300 },
+        { intervalo: "12:00-13:00", produzido: Math.floor(Math.random() * 500) + 900 },
+        { intervalo: "13:00-14:00", produzido: Math.floor(Math.random() * 500) + 1150 },
+      ];
+      
+      const productionChartInfo = {
+        type: 'productionChart',
+        id: `${machine.id}-hourly-prod-chart-TEST`,
+        hourlyProductionData: fixedHourlyTestData,
+      };
+      // --- FIM: DADOS FIXOS PARA O GRÁFICO DE PRODUÇÃO HORÁRIA ---
+
+      if (machine.tipo === 'rychiger') {
+        if (machine.parte1_nome) partStateInfos.push({ type: 'state', id: `${machine.id}-p1`, title: machine.parte1_nome, status: machine.estado_parte1 });
+        if (machine.parte2_nome) partStateInfos.push({ type: 'state', id: `${machine.id}-p2`, title: machine.parte2_nome, status: machine.estado_parte2 });
+        if (machine.parte3_nome) partStateInfos.push({ type: 'state', id: `${machine.id}-p3`, title: machine.parte3_nome, status: machine.estado_parte3 });
+      } else {
+        if (machine.parte1_nome) partStateInfos.push({ type: 'state', id: `${machine.id}-p1`, title: machine.parte1_nome, status: machine.estado_parte1 });
+      }
+      if (partStateInfos.length === 0 && !machine.parte1_nome && !machine.parte2_nome && !machine.parte3_nome) {
+        partStateInfos.push({ type: 'state', id: `${machine.id}-no-parts`, title: "Sem partes definidas", status: null });
+      }
+      
+      setCardsData([orderCardInfo, ...partStateInfos, productionChartInfo].filter(Boolean));
     };
 
-    fetchOrder();
-
+    fetchOrderAndProductionData();
   }, [selectedLinha, linhas]);
 
   const handleRefresh = () => {
@@ -155,13 +173,18 @@ const MainContent = () => {
       </div>
 
       {cardsData.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {cardsData.map((data) => {
-            if (data.type === 'order') {
-              return <OrderCard key={data.id} orderCode={data.orderCode} data_inicio={data.data_inicio} />;
+        <div className="flex flex-wrap gap-8"> {/* Aumentado de gap-6 para gap-8 */}
+          {cardsData.map((cardInfo) => {
+            if (!cardInfo) return null;
+
+            if (cardInfo.type === 'order') {
+              return <OrderCard key={cardInfo.id} orderCode={cardInfo.orderCode} data_inicio={cardInfo.data_inicio} />;
             }
-            if (data.type === 'state') {
-              return <StateCard key={data.id} title={data.title} status={data.status} />;
+            if (cardInfo.type === 'productionChart') {
+              return <ProductionChartCard key={cardInfo.id} hourlyProductionData={cardInfo.hourlyProductionData} />;
+            }
+            if (cardInfo.type === 'state') {
+              return <StateCard key={cardInfo.id} title={cardInfo.title} status={cardInfo.status} />;
             }
             return null;
           })}

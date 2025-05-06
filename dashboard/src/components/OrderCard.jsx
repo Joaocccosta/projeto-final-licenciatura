@@ -21,7 +21,6 @@ const formatElapsedTime = (totalMinutes) => {
   return `${minutes}m`;
 };
 
-
 const OrderCard = ({ orderCode, data_inicio }) => {
   const [elapsedMinutes, setElapsedMinutes] = useState(() => calculateElapsedMinutes(data_inicio));
 
@@ -45,14 +44,13 @@ const OrderCard = ({ orderCode, data_inicio }) => {
   }, [data_inicio]); // Re-executa o efeito se data_inicio mudar
 
   return (
-    <div className="bg-blue-500 p-6 rounded-lg shadow-md text-white text-center flex flex-col justify-between items-center min-h-[150px]"> {/* Aumentei a altura mínima */}
+    <div className="bg-blue-500 p-6 rounded-lg shadow-md text-white text-center flex flex-col justify-between items-center min-h-[150px] w-[300px]"> {/* Adicionado w-[300px] */}
       <div> {/* Container para Ordem */}
         <h3 className="text-lg font-semibold mb-1">Ordem Produção</h3>
         <p className="text-2xl font-bold break-all">{orderCode || 'N/A'}</p>
       </div>
       <div className="mt-2"> {/* Container para Tempo Decorrido */}
         <p className="text-sm">Tempo Decorrido:</p>
-        {/* Mostra o tempo formatado ou 'Calculando...' se data_inicio for inválida inicialmente */}
         <p className="text-xl font-semibold">
           {data_inicio ? formatElapsedTime(elapsedMinutes) : 'N/A'}
         </p>
