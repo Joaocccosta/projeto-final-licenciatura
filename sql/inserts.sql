@@ -2,68 +2,21 @@ USE producao_dashboard;
 
 # Maquinas
 INSERT INTO maquinas (id, name, alt_name, description, notes, display_order) VALUES
-(2, 'NovaDelta', NULL, NULL, NULL, 2),
-(3, 'Embalagem', NULL, NULL, NULL, 3),
-(4, 'DeltaQ', NULL, NULL, NULL, 4),
-(5, 'DeltaQ4', NULL, 'RYCHIGER I', NULL, 218),
-(7, 'Grao_e_Moido_Auto', NULL, 'Grão e Moído Automático', NULL, 5523),
-(8, 'Central_Paletizacao', NULL, 'Central Paletização', NULL, 3115),
-(9, 'Paletizacao01', NULL, 'Paletizadora 01', NULL, 3116),
-(10, 'PaletizacaoManual', NULL, NULL, NULL, 10992),
-(11, 'Doypak (Bossar 1)', NULL, 'Linha Doypak', NULL, 3118),
-(12, 'Goglio1', NULL, 'Goglio 1Kg', NULL, 3119),
-(13, 'Goglio2', NULL, 'Goglio 1/2Kg', NULL, 3120),
-(14, 'GoglioGL22', NULL, 'Goglio GL22', NULL, 3121),
-(15, 'DeltaQ5', NULL, 'RYCHIGER II', NULL, 4711),
-(16, 'DeltaQ6', NULL, 'RYCHIGER III', NULL, 4731),
-(17, 'Manutencao', NULL, 'Manutenção', NULL, 5041),
-(18, 'Torra', NULL, 'Torra', NULL, 5308),
-(19, 'Torradores', NULL, 'Torradores', NULL, 5309),
-(20, 'Torrefacto', NULL, 'Torrefacto', NULL, 5310),
-(21, 'Central-Cafes', NULL, NULL, NULL, 5476),
-(22, 'Moinhos', NULL, NULL, NULL, 5477),
-(23, 'DeltaOffice', NULL, NULL, NULL, 3114),
-(24, 'DeltaOffice', NULL, NULL, NULL, 5524),
-(25, 'Pastilhas', NULL, NULL, NULL, 5590),
-(26, 'Pastilhas200-026', NULL, NULL, NULL, 5591),
-(27, 'Volpaks', NULL, NULL, NULL, 5597),
-(28, 'Volpack200-019', NULL, NULL, NULL, 5604),
-(29, 'Goglio3', NULL, 'Goglio 3', NULL, 5610),
-(30, 'Bosch2', NULL, 'Bosch 1/4Kg', NULL, 5611),
-(31, 'Despaletizadoras', NULL, NULL, NULL, 11822),
-(32, 'DeltaQ7', NULL, 'RYCHIGER IV', NULL, 6710),
-(33, 'Açucar', NULL, NULL, NULL, 8487),
-(34, 'Sala_control', NULL, NULL, NULL, 8564),
-(35, 'Misturadoras', NULL, NULL, NULL, 8565),
-(38, 'DeltaQ1', NULL, NULL, NULL, 8877),
-(39, 'DeltaQ2', NULL, NULL, NULL, 8878),
-(40, 'DeltaQ3', NULL, NULL, NULL, 9921),
-(41, 'Tratamento de aguas', NULL, NULL, NULL, 8940),
-(42, 'ETAR+Evaporador', NULL, NULL, NULL, 8941),
-(43, 'Indosa', NULL, NULL, NULL, 9031),
-(44, 'Canela', NULL, NULL, NULL, 9039),
-(45, 'Prensa Hofle', NULL, NULL, NULL, 9065),
-(46, 'Grao', NULL, NULL, NULL, 9107),
-(47, 'PromevaRuby', NULL, NULL, NULL, 9108),
-(48, 'Pickmesa', NULL, NULL, NULL, 9135),
-(49, 'Forno', NULL, NULL, NULL, 9154),
-(50, 'Moido', NULL, NULL, NULL, 9165),
-(51, 'Ica Cafe', NULL, NULL, NULL, 9166),
-(52, 'Ica cevadas', NULL, NULL, NULL, 9167),
-(53, 'DeltaQ8', NULL, NULL, NULL, 8876),
-(54, 'Paletizacao02', NULL, 'Paletizadora 02', NULL, 3117),
-(55, 'Paletizacao03', NULL, 'Central Paletização Automatica', NULL, 5776),
-(56, 'PaletizacaoMan03', NULL, NULL, NULL, 10049),
-(57, 'Café Verde', NULL, NULL, NULL, 36405),
-(58, 'Goglio_Cevadas', NULL, NULL, NULL, 36407),
-(59, 'Bossar_Descafeinados', NULL, NULL, NULL, 36415),
-(60, 'Gino Rossi', NULL, NULL, NULL, 36417),
-(61, 'Gino Rossi 1', NULL, NULL, NULL, 36418),
-(62, 'Gino Rossi 2', NULL, NULL, NULL, 36419),
-(63, 'Gino Rossi 3', NULL, NULL, NULL, 36420),
-(64, 'Gino Rossi 4', NULL, NULL, NULL, 36421),
-(65, 'Cafe Liquido', NULL, NULL, NULL, 36562),
-(66, 'Café Líquido', NULL, NULL, NULL, 36563);
+(2, 'Rychiger 1', 'DeltaQ1', NULL, NULL, 1),
+(3, 'Rychiger 2', 'DeltaQ2', NULL, NULL, 2),
+(4, 'Rychiger 3', 'DeltaQ3', NULL, NULL, 3),
+(5, 'Rychiger 4', 'DeltaQ4', NULL, NULL, 4),
+(6, 'Rychiger 5', 'DeltaQ5', NULL, NULL, 5),
+(7, 'Rychiger 6', 'DeltaQ6', NULL, NULL, 6),
+(8, 'Bossar 1', NULL, NULL, NULL, 7),
+(9, 'Bossar 2', NULL, NULL, NULL, 8),
+(10, 'Bossar Descafeinados', NULL, NULL, NULL, 9),
+(11, 'Goglio 1', NULL, NULL, NULL, 10),
+(12, 'Goglio 2', NULL, NULL, NULL, 11),
+(13, 'Goglio 4', NULL, NULL, NULL, 12),
+(14, 'Goglio 5', NULL, NULL, NULL, 13),
+(15, 'Goglio Cevadas', NULL, NULL, NULL, 14),
+(16, 'GL 22', NULL, NULL, NULL, 15);
 
 
 # Tipos de eventos
@@ -83,3 +36,60 @@ INSERT INTO event_types (id, name, alt_name, description, notes, display_order) 
 (15, 'Automatico', NULL, 'Automático', NULL, 5995),
 (16, 'Manutencao', NULL, 'Manutenção', NULL, 6887);
 
+# Sttings
+INSERT INTO SystemSettings (SettingKey, SettingValue, Description)
+VALUES ('refresh_interval_seconds', '120', 'Tempo de refresh automático em segundos');
+
+INSERT INTO ProductionOrders (OrderNumber, dateStart, dateEnd, MachineID) VALUES
+('ORD003', '2025-05-10 16:00:00', '2025-05-15 00:00:00', 3),
+('ORD004', '2025-05-11 00:00:00', '2025-05-15 08:00:00', 4),
+('ORD005', '2025-05-11 08:00:00', '2025-05-15 16:00:00', 9),
+('ORD006', '2025-05-11 08:00:00', '2025-05-15 16:00:00', 10);
+
+INSERT INTO ProductionIndicators (
+    ProductionOrderID, MachineID,
+    UnitsUnits, TargetUnits, UnitsBox10, TargetBox10, UnitsBox24, TargetBox24,
+    StateMainLine, StateBox10, StateBox24,
+    AvailabilityUnits, PerformanceUnits, QualityUnits, OeeUnits,
+    AvailabilityBox10, PerformanceBox10, QualityBox10, OeeBox10,
+    AvailabilityBox24, PerformanceBox24, QualityBox24, OeeBox24
+) VALUES
+(1, 3, 14000, 16000, 600, 700, 800, 900, 1, 1, 1, 94.0, 91.0, 97.0, 83.00, 93.0, 90.0, 96.0, 80.35, 92.0, 88.0, 95.0, 76.56),
+(2, 4, 13000, 15000, 550, 650, 750, 850, 1, 1, 1, 93.0, 89.0, 96.0, 79.50, 92.0, 87.0, 94.0, 75.07, 91.0, 85.0, 93.0, 72.01),
+(3, 9, 10000, 12000, NULL, NULL, NULL, NULL, 1, NULL, NULL, 90.0, 86.0, 93.0, 71.91, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 10, 11000, 13000, NULL, NULL, NULL, NULL, 1, NULL, NULL, 91.0, 87.0, 94.0, 74.39, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+INSERT INTO EventDetails (
+	StartDateTime, EndDateTime, SystemName, EventDefinitionName,
+    EventCategoryID, DurationSeconds, State, IsActive, IsComplete, Comments
+) VALUES
+('2025-05-10 16:30:00', '2025-05-10 17:00:00', 'DeltaQ3', 'Abastecimento café', 4, 1800, 1, 0, 1, 'Recarregar reservatório de café'),
+('2025-05-11 01:00:00', '2025-05-11 01:20:00', 'DeltaQ4', 'Ajuste de válvulas', 7, 1200, 1, 1, 1, 'Afinação por variação de pressão'),
+('2025-05-11 09:00:00', NULL, 'Bossar 2', 'Falha na esteira', 3, NULL, 1, 1, 0, 'Avaria não resolvida ainda'),
+('2025-05-11 10:00:00', '2025-05-11 10:15:00', 'Bossar 2', 'Limpeza rápida', 8, 900, 1, 1, 1, 'Limpeza corretiva de emergência');
+
+INSERT INTO HourlyProduction (ProductionIndicatorID, MachinePart, HourStart, ProducedUnits) VALUES
+-- ORD003 / DeltaQ3
+(1, 'Capsules', '2025-05-10 16:00:00', 1600),
+(1, 'Capsules', '2025-05-10 17:00:00', 1650),
+(1, 'Capsules', '2025-05-10 18:00:00', 1850),
+(1, 'Capsules', '2025-05-10 19:00:00', 2650),
+(1, 'Capsules', '2025-05-10 20:00:00', 1350),
+(1, 'Capsules', '2025-05-10 21:00:00', 1750),
+
+(1, 'Box10', '2025-05-10 16:00:00', 65),
+(1, 'Box24', '2025-05-10 16:00:00', 85),
+
+-- ORD004 / DeltaQ4
+(2, 'Capsules', '2025-05-11 00:00:00', 1550),
+(2, 'Capsules', '2025-05-11 01:00:00', 1500),
+(2, 'Box10', '2025-05-11 00:00:00', 60),
+(2, 'Box24', '2025-05-11 00:00:00', 75),
+
+-- ORD005 / Bossar 2
+(3, 'Units', '2025-05-11 08:00:00', 1200),
+(3, 'Units', '2025-05-11 09:00:00', 1250),
+
+-- ORD006 / Bossar Descafeinados
+(4, 'Units', '2025-05-11 08:00:00', 1300),
+(4, 'Units', '2025-05-11 09:00:00', 1350);

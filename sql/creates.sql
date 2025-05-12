@@ -23,7 +23,7 @@ CREATE TABLE event_types (
 
 # Eventos
 CREATE TABLE EventDetails (
-    EventID INT PRIMARY KEY,
+    EventID INT PRIMARY KEY auto_increment,
     StartDateTime DATETIME, 
     EndDateTime DATETIME NULL,
     SystemName VARCHAR(255),
@@ -55,8 +55,8 @@ CREATE TABLE ProductionIndicators (
     MachineID INT NOT NULL,
 
     -- Unidades produzidas (atuais e alvo)
-    UnitsCapsules INT,
-    TargetCapsules INT,
+    UnitsUnits INT,
+    TargetUnits INT,
     UnitsBox10 INT,
     TargetBox10 INT,
     UnitsBox24 INT,
@@ -66,12 +66,12 @@ CREATE TABLE ProductionIndicators (
     StateMainLine TINYINT NOT NULL DEFAULT 0,
     StateBox10 TINYINT DEFAULT NULL,
     StateBox24 TINYINT DEFAULT NULL,
-
+	
     -- OEE por parte da máquina - Cápsulas
-    AvailabilityCapsules DECIMAL(5,2),
-    PerformanceCapsules DECIMAL(5,2),
-    QualityCapsules DECIMAL(5,2),
-    OeeCapsules DECIMAL(5,2),
+    AvailabilityUnits DECIMAL(5,2),
+    PerformanceUnits DECIMAL(5,2),
+    QualityUnits DECIMAL(5,2),
+    OeeUnits DECIMAL(5,2),
 
     -- OEE por parte da máquina - Caixa10
     AvailabilityBox10 DECIMAL(5,2),
@@ -95,9 +95,18 @@ CREATE TABLE ProductionIndicators (
 CREATE TABLE HourlyProduction (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     ProductionIndicatorID INT NOT NULL,
-    MachinePart ENUM('Capsules', 'Box10', 'Box24') NOT NULL,
+    MachinePart ENUM('Units', 'Capsules', 'Box10', 'Box24') NOT NULL,
     HourStart DATETIME NOT NULL,
     ProducedUnits INT DEFAULT 0,
 
     FOREIGN KEY (ProductionIndicatorID) REFERENCES ProductionIndicators(ID)
 );
+
+CREATE TABLE SystemSettings (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    SettingKey VARCHAR(100) NOT NULL UNIQUE,
+    SettingValue VARCHAR(255) NOT NULL,
+    Description VARCHAR(255),
+    LastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+

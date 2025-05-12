@@ -7,7 +7,7 @@ async function getLinesFromDatabase() {
   try {
     // Assume que a view tem colunas como 'id' e 'nome' ou similar
     // Ajusta o nome das colunas conforme a tua view 'vw_maquinas_info'
-    const [rows] = await db.query('SELECT * FROM vw_maquinas'); // Seleciona as colunas necessárias da view
+    const [rows] = await db.query('SELECT * FROM view_maquinas_id_nome;'); // Seleciona as colunas necessárias da view
     return rows; // Retorna as linhas encontradas
   } catch (error) {
     console.error('Database error fetching lines:', error);

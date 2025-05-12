@@ -1,17 +1,15 @@
 const express = require('express');
 const router = express.Router();
-
-/*
-const db = require('../db'); // Import your database connection
+const db = require('../db');
 
 async function getEventTypes() {
-  const [rows] = await db.query('SELECT typeName FROM EventTypes');
-  return rows.map(row => row.typeName);
-}*/
+  const [rows] = await db.query('SELECT * FROM vw_event_types');
+  return rows;
+}
 
 router.get('/', async (req, res) => {
   try {
-    const eventTypes = await getEventTypes(); // Replace with your database logic
+    const eventTypes = await getEventTypes();
     res.json({ eventTypes });
   } catch (error) {
     console.error(error);
