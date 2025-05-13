@@ -34,7 +34,7 @@ async function saveEvent(event) {
      AND StartDateTime = ? 
      AND (Comments = ? OR (Comments IS NULL AND ? IS NULL))`,
     [
-      `Sistema_${machineId}`,
+      `${machineId}`,
       eventTypeId,
       startDateTime,
       comment,
@@ -55,8 +55,8 @@ async function saveEvent(event) {
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       startDateTime,
-      `Sistema_${machineId}`, // Nome do sistema baseado no ID da máquina
-      `Evento_${eventTypeId}`, // Nome da definição do evento baseado no tipo
+      `${machineId}`, // Nome do sistema baseado no ID da máquina
+      `${eventTypeId}`, // Nome da definição do evento baseado no tipo
       eventTypeId,
       1, // Estado inicial
       0, // Ativo

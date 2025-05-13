@@ -3,11 +3,21 @@ import StateCard from './StateCard';
 import OrderCard from './OrderCard';
 import ProductionChartCard from './ProductionChartCard';
 import CircularProgressCard from './CircularPogressChart';
+import GaugeCard from './GaugeCard';
 
-const MainContent = () => {
+const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) => {
   const [linhas, setLinhas] = useState([]);
   const [isFullscreen, setIsFullscreen] = useState(!!document.fullscreenElement);
-  const [selectedLinha, setSelectedLinha] = useState("");
+  // Se receber selectedLinha como prop, usar ela, senão manter state interno
+  const [selectedLinha, setSelectedLinha] = useState(externalSelectedLinha || "");
+  
+  // Sincronizar o state interno com o externo quando mudar
+  useEffect(() => {
+    if (externalSelectedLinha !== undefined && externalSelectedLinha !== selectedLinha) {
+      setSelectedLinha(externalSelectedLinha);
+    }
+  }, [externalSelectedLinha]);
+
   const [cardsData, setCardsData] = useState([]);
   const [refreshTime, setRefreshTime] = useState(120); // Default 120 segundos
   const refreshIntervalRef = useRef(null);
@@ -150,6 +160,47 @@ const MainContent = () => {
             id: `${machine.id}-box24`,
             title: 'Embalagem Caixa 24',
             status: production.box24.state
+          });
+        }
+      }
+
+      // 2.5 Gauge Cards para mostrar progresso de produção
+      if (production.units) {
+        // Máquina de unidades simples
+        newCards.push({
+          type: 'gauge',
+          id: `${machine.id}-gauge-units`,
+          title: 'Produção de Unidades',
+          current: production.units.current,
+          target: production.units.target
+        });
+      } else if (production.capsules) {
+        // Máquina de cápsulas + caixas
+        newCards.push({
+          type: 'gauge',
+          id: `${machine.id}-gauge-capsules`,
+          title: 'Produção de Cápsulas',
+          current: production.capsules.current,
+          target: production.capsules.target
+        });
+        
+        if (production.box10) {
+          newCards.push({
+            type: 'gauge',
+            id: `${machine.id}-gauge-box10`,
+            title: 'Produção Caixa 10',
+            current: production.box10.current,
+            target: production.box10.target
+          });
+        }
+        
+        if (production.box24) {
+          newCards.push({
+            type: 'gauge',
+            id: `${machine.id}-gauge-box24`,
+            title: 'Produção Caixa 24',
+            current: production.box24.current,
+            target: production.box24.target
           });
         }
       }
@@ -338,7 +389,12 @@ const MainContent = () => {
         <select
           className="p-4 border-2 border-gray-300 rounded shadow-md w-72 text-base focus:outline-none focus:border-blue-500 text-black"
           value={selectedLinha}
-          onChange={(e) => setSelectedLinha(e.target.value)}
+          onChange={(e) => {
+            const newValue = e.target.value;
+            console.log("Linha selecionada:", newValue);
+            setSelectedLinha(newValue);
+            if (onLineaChange) onLineaChange(newValue);
+          }}
           style={{ color: 'black' }}
         >
           <option value="" style={{ color: 'black' }}>Selecione a Linha</option>
@@ -371,6 +427,9 @@ const MainContent = () => {
             }
             if (cardInfo.type === 'oee') {
               return <CircularProgressCard key={cardInfo.id} title={cardInfo.title} percentage={cardInfo.percentage} expected={cardInfo.expected} />;
+            }
+            if (cardInfo.type === 'gauge') {
+              return <GaugeCard key={cardInfo.id} title={cardInfo.title} current={cardInfo.current} target={cardInfo.target} />;
             }
             return null;
           })}
