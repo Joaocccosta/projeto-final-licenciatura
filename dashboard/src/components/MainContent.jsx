@@ -1,13 +1,15 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react"; // Add useCallback
 import StateCard from './StateCard';
 import OrderCard from './OrderCard';
 import ProductionChartCard from './ProductionChartCard';
-import CircularProgressCard from './CircularPogressChart';
+import CircularProgressCard from './CircularProgressCard';
 import GaugeCard from './GaugeCard';
 
 const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) => {
   const [linhas, setLinhas] = useState([]);
-  const [isFullscreen, setIsFullscreen] = useState(!!document.fullscreenElement);
+  const mainContentRef = useRef(null); // Ref for the MainContent's root element
+  const [isFullscreen, setIsFullscreen] = useState(false); // Will be updated by event listener
+  
   // Se receber selectedLinha como prop, usar ela, senão manter state interno
   const [selectedLinha, setSelectedLinha] = useState(externalSelectedLinha || "");
   
@@ -16,7 +18,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
     if (externalSelectedLinha !== undefined && externalSelectedLinha !== selectedLinha) {
       setSelectedLinha(externalSelectedLinha);
     }
-  }, [externalSelectedLinha]);
+  }, [externalSelectedLinha, selectedLinha]);
 
   const [cardsData, setCardsData] = useState([]);
   const [refreshTime, setRefreshTime] = useState(120); // Default 120 segundos
@@ -60,11 +62,21 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
         setLinhas([]);
       });
 
-    const handleFullscreenChange = () => setIsFullscreen(!!document.fullscreenElement);
+    const handleFullscreenChange = () => {
+      // Check if the fullscreen element is our mainContentRef's current element
+      setIsFullscreen(document.fullscreenElement === mainContentRef.current);
+    };
     document.addEventListener("fullscreenchange", handleFullscreenChange);
     document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
     document.addEventListener("mozfullscreenchange", handleFullscreenChange);
     document.addEventListener("MSFullscreenChange", handleFullscreenChange);
+    
+    // Initial check in case component mounts into a fullscreen state
+    // (e.g. after a refresh while already fullscreen)
+    if (mainContentRef.current && document.fullscreenElement === mainContentRef.current) {
+        setIsFullscreen(true);
+    }
+
     return () => {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
       document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
@@ -76,10 +88,10 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
         clearInterval(refreshIntervalRef.current);
       }
     };
-  }, []);
+  }, []); // Empty dependency array ensures this runs once on mount and cleans up on unmount
 
   // Função para buscar dados da API
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!selectedLinha) return;
     
     const machine = linhas.find(l => String(l.id) === selectedLinha);
@@ -262,7 +274,6 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
         }
       }
       
-      // 4. Production Chart Data
       if (data.hourlyProduction && data.hourlyProduction.length > 0) {
         hourlyProductionData = data.hourlyProduction.map(item => {
           // Extrair apenas hora e minuto se o formato for datetime completo
@@ -318,7 +329,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
     
     // Atualizar os cards
     setCardsData(newCards);
-  };
+  }, [selectedLinha, linhas, setOeeData, setCardsData]); // Add dependencies for useCallback
 
   // Configurar/limpar o intervalo quando a linha selecionada mudar
   useEffect(() => {
@@ -326,6 +337,12 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
     if (refreshIntervalRef.current) {
       clearInterval(refreshIntervalRef.current);
       refreshIntervalRef.current = null;
+    }
+
+    // Limpar os dados se nenhuma linha estiver selecionada
+    if (!selectedLinha) {
+      setCardsData([]); // This setCardsData is fine here
+      return;
     }
 
     // Buscar dados imediatamente
@@ -343,14 +360,14 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
         clearInterval(refreshIntervalRef.current);
       }
     };
-  }, [selectedLinha, refreshTime, linhas]);
+  }, [selectedLinha, refreshTime, linhas, fetchData]); // fetchData is now memoized
 
   const handleRefresh = () => {
     fetchData(); // Atualiza os dados sem recarregar a página
   };
 
   const enterFullscreen = () => {
-    const element = document.documentElement;
+    const element = mainContentRef.current;
     if (element.requestFullscreen) element.requestFullscreen();
     else if (element.webkitRequestFullscreen) element.webkitRequestFullscreen();
     else if (element.msRequestFullscreen) element.msRequestFullscreen();
@@ -363,22 +380,21 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
   };
 
   return (
-    <div className="pl-8 pt-4 pr-8 pb-4 relative h-full bg-white overflow-y-auto">
+    <div ref={mainContentRef} className="pl-8 pt-4 pr-8 pb-4 relative h-full bg-white overflow-y-auto">
       <div className="absolute top-4 right-4 flex space-x-2 z-10">
-        <button onClick={handleRefresh} className="p-2 rounded hover:bg-gray-200" title="Atualizar dados">
+        <button onClick={handleRefresh} className="p-2 rounded hover:bg-gray-200 border border-black" title="Atualizar dados">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 text-gray-600">
             <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
           </svg>
         </button>
-        <button onClick={!isFullscreen ? enterFullscreen : exitFullscreen} className="p-2 rounded hover:bg-gray-200" title={!isFullscreen ? "Enter Fullscreen" : "Exit Fullscreen"}>
+        <button onClick={!isFullscreen ? enterFullscreen : exitFullscreen} className="p-2 rounded hover:bg-gray-200 border border-black" title={!isFullscreen ? "Enter Fullscreen" : "Exit Fullscreen"}>
           {!isFullscreen ? (
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
             </svg>
           ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 4H6v4m8 0V4h4m0 8v4h-4m-8 0H6v-4" />
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5M15 15l5.25 5.25" />
             </svg>
           )}
         </button>
@@ -394,6 +410,11 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
             console.log("Linha selecionada:", newValue);
             setSelectedLinha(newValue);
             if (onLineaChange) onLineaChange(newValue);
+            
+            // Se o valor for vazio, limpar os cards
+            if (!newValue) {
+              setCardsData([]);
+            }
           }}
           style={{ color: 'black' }}
         >

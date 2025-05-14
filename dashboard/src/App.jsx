@@ -1,32 +1,49 @@
 import { useState } from 'react';
-import Header from './components/Header';
-import MainContent from './components/MainContent';
-import Sidebar from './components/Sidebar';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import Login from './pages/Login';
+import NotFoundPage from './pages/NotFoundPage'; // Import the NotFoundPage
+import Dashboard from './pages/Dashboard'; // Import Dashboard from its new location
+
+// Componente de proteção de rota
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, isGuest, loading } = useAuth(); // Add isGuest
+
+  if (loading) {
+    return <div>Carregando...</div>;
+  }
+
+  // Allow access if authenticated OR if it's a guest session
+  if (!isAuthenticated && !isGuest) {
+    return <Navigate to="/login" />;
+  }
+
+  return children;
+};
 
 function App() {
-  const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [selectedLinha, setSelectedLinha] = useState("");
-
-  const toggleSidebar = () => {
-    setSidebarVisible(!sidebarVisible);
-  };
-
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
-      <div className="flex flex-1 overflow-hidden">
-        <div className="flex-grow overflow-hidden relative">
-          <MainContent 
-            onLineaChange={(linhaId) => setSelectedLinha(linhaId)} 
-            selectedLinha={selectedLinha}
+    <Router>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/dashboard" // Dedicated route for the Dashboard
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
           />
-        </div>
-        <Sidebar 
-          visible={sidebarVisible} 
-          toggle={toggleSidebar} 
-          selectedLinha={selectedLinha} 
-        />
-      </div>
-    </div>
+          <Route
+            path="/" // Root path now redirects to /dashboard
+            element={<Navigate to="/dashboard" replace />}
+          />
+          {/* Catch-all route for any paths not matched above, now shows NotFoundPage */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </AuthProvider>
+    </Router>
   );
 }
 

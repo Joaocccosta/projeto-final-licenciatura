@@ -93,3 +93,28 @@ INSERT INTO HourlyProduction (ProductionIndicatorID, MachinePart, HourStart, Pro
 -- ORD006 / Bossar Descafeinados
 (4, 'Units', '2025-05-11 08:00:00', 1300),
 (4, 'Units', '2025-05-11 09:00:00', 1350);
+
+INSERT INTO Users (
+    ExternalID, Name, Description, Notes, UserTypeID, Type, Login, Email, 
+    Locale, IsAdministrator, IsAuditor, Enabled, SiteID, PasswordHash, 
+    AllowMultipleUserLogins, FailedLoginAttempts, PasswordUpdatedDateTime, Locked
+) VALUES 
+(NULL, 'João Costa - ISEL', 'Desenvolvedor de software', NULL, NULL, 3, 'jcosta.isel', 'jcosta@isel.pt', 
+ 'pt-PT', 1, 0, 1, 1, '$2a$12$q8AVCFJpLP8sqWGTb2EKGeKfFq2ZycJrLfG5hNK/grtYxS5V340wm', -- senha123 rounds=12
+ 0, 0, '2025-04-10 16:54:46.000', 0),
+
+(NULL, 'Maria Silva', 'Engenheira de Produção', 'Responsável pela linha 1', NULL, 2, 'msilva', 'msilva@empresa.com', 
+ 'pt-PT', 0, 0, 1, 1, '$2a$12$q8AVCFJpLP8sqWGTb2EKGeKfFq2ZycJrLfG5hNK/grtYxS5V340wm', 
+ 0, 0, '2025-03-15 09:30:00.000', 0),
+
+(NULL, 'Carlos Santos', 'Operador', 'Operador da linha 2', NULL, 1, 'csantos', 'csantos@empresa.com', 
+ 'pt-PT', 0, 0, 1, 1, '$2a$12$q8AVCFJpLP8sqWGTb2EKGeKfFq2ZycJrLfG5hNK/grtYxS5V340wm', 
+ 0, 0, '2025-02-20 14:15:22.000', 0),
+
+(NULL, 'Ana Oliveira', 'Gerente de Qualidade', NULL, NULL, 2, 'aoliveira', 'aoliveira@empresa.com', 
+ 'pt-PT', 0, 1, 1, 1, '$2a$12$q8AVCFJpLP8sqWGTb2EKGeKfFq2ZycJrLfG5hNK/grtYxS5V340wm', 
+ 0, 0, '2025-01-05 10:45:30.000', 0),
+
+(NULL, 'Pedro Ferreira', 'Administrador de Sistemas', 'IT Support', NULL, 3, 'pferreira', 'pferreira@empresa.com', 
+ 'pt-PT', 1, 0, 1, 1, '$2a$12$q8AVCFJpLP8sqWGTb2EKGeKfFq2ZycJrLfG5hNK/grtYxS5V340wm', 
+ 1, 0, '2025-04-01 08:20:15.000', 0);
