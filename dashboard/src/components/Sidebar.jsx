@@ -108,9 +108,8 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
 
   return (
     <div className={`transition-all duration-300 ${visible ? "w-85" : "w-0"} bg-gray-800 text-white border-l shadow h-full relative`}>
-      {/* Botão visível sempre, logo abaixo do topo da sidebar */}
       <div className="p-2">
-        <button onClick={toggle} className="absolute top-1/2 -translate-y-1/2 -left-10 bg-white text-gray-700 rounded-l px-1 py-2 shadow z-10">
+        <button onClick={toggle} className="absolute top-1/2 -translate-y-1/2 -left-10 bg-white text-gray-700 rounded-l px-1 py-2 shadow z-10 border border-black">
           {visible ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
       </div>

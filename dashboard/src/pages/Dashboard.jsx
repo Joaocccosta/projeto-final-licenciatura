@@ -2,14 +2,19 @@ import { useState } from 'react';
 import Header from '../components/Header';
 import MainContent from '../components/MainContent';
 import Sidebar from '../components/Sidebar';
+import { useAuth } from '../contexts/AuthContext';
 
 const Dashboard = () => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [selectedLinha, setSelectedLinha] = useState("");
+  const { user, isGuest } = useAuth();
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
   };
+
+  // Only show sidebar for authenticated users who are not guests
+  const showSidebar = user && !isGuest;
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
@@ -18,15 +23,16 @@ const Dashboard = () => {
         <div className="flex-grow overflow-hidden relative">
           <MainContent
             onLineaChange={(linhaId) => setSelectedLinha(linhaId)}
-            selectedLin
-            ha={selectedLinha}
+            selectedLinha={selectedLinha}
           />
         </div>
-        <Sidebar
-          visible={sidebarVisible}
-          toggle={toggleSidebar}
-          selectedLinha={selectedLinha}
-        />
+        {showSidebar && (
+          <Sidebar
+            visible={sidebarVisible}
+            toggle={toggleSidebar}
+            selectedLinha={selectedLinha}
+          />
+        )}
       </div>
     </div>
   );
