@@ -8,6 +8,3 @@ dist
 # Docker
 *.log
 api/db.js
-
-# Database
-db.js

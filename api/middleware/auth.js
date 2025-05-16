@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 // Chave secreta para assinar tokens JWT (use uma variável de ambiente em produção)
-const JWT_SECRET = process.env.JWT_SECRET || 'dashboard-production-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Middleware para verificar autenticação
 const authenticateToken = (req, res, next) => {
