@@ -20,7 +20,7 @@ const Dashboard = () => {
     <div className="flex flex-col h-screen overflow-hidden">
       <Header />
       <div className="flex flex-1 overflow-hidden">
-        <div className="flex-grow overflow-hidden relative">
+        <div className="flex-1 flex flex-col overflow-auto">
           <MainContent
             onLineaChange={(linhaId) => setSelectedLinha(linhaId)}
             selectedLinha={selectedLinha}

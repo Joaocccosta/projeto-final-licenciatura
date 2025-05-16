@@ -21,7 +21,8 @@ const getOEERouter = require('./routes/getOEE.js');
 const getEventTypesRouter = require('./routes/getEventTypes.js');
 const saveEventRouter = require('./routes/saveEvent.js');
 const getRefreshRouter = require('./routes/getRefresh.js');
-const getOrderRouter = require('./routes/getOrder.js');
+const closeEventRouter = require('./routes/closeEvent.js');
+const getActiveEventsRouter = require('./routes/getActiveEvent.js');
 
 // Auth routes
 const loginRouter = require('./routes/auth/login.js');
@@ -34,7 +35,8 @@ app.use('/api/getoee', getOEERouter);
 app.use('/api/geteventtypes', getEventTypesRouter);
 app.use('/api/saveevent', saveEventRouter);
 app.use('/api/getrefresh', getRefreshRouter);
-app.use('/api/getorder', getOrderRouter);
+app.use('/api/closeevent', closeEventRouter);
+app.use('/api/getactiveevents', getActiveEventsRouter);
 
 // Mounting auth routes
 app.use('/api/auth/login', loginRouter);

@@ -55,3 +55,18 @@ CREATE VIEW vw_event_types AS
 SELECT id, name 
 FROM event_types
 ORDER BY display_order, id;
+
+
+CREATE OR REPLACE VIEW unfinished_events AS
+SELECT 
+    ed.EventID, 
+    et.name AS task_name,
+    ed.StartDateTime  -- Adicionado o campo de data/hora de início
+FROM 
+    EventDetails ed
+INNER JOIN 
+    event_types et ON ed.EventCategoryID = et.id
+WHERE 
+    ed.IsComplete = 0
+ORDER BY 
+    ed.StartDateTime DESC;

@@ -3,7 +3,7 @@ USE producao_dashboard;
 
 # maquinas
 CREATE TABLE maquinas (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY auto_increment,
     name VARCHAR(100) NOT NULL,
     alt_name VARCHAR(100),
     description VARCHAR(255),
@@ -13,7 +13,7 @@ CREATE TABLE maquinas (
 
 # tipos eventos
 CREATE TABLE event_types (
-  id INT PRIMARY KEY,
+  id INT PRIMARY KEY auto_increment,
   name VARCHAR(100) NOT NULL,
   alt_name VARCHAR(100),
   description VARCHAR(255),
@@ -26,15 +26,13 @@ CREATE TABLE EventDetails (
     EventID INT PRIMARY KEY auto_increment,
     StartDateTime DATETIME, 
     EndDateTime DATETIME NULL,
-    SystemName VARCHAR(255),
-    EventDefinitionName VARCHAR(255),
+    SystemID INT,
     EventCategoryID INT,
-    DurationSeconds INT,
-    State INT,
     IsActive INT,
     IsComplete INT,
     Comments TEXT NULL,
-    FOREIGN KEY (EventCategoryID) REFERENCES event_types(id)
+    FOREIGN KEY (EventCategoryID) REFERENCES event_types(id),
+    FOREIGN KEY (SystemID) REFERENCES maquinas(id)
 );
 
 # Ordens
@@ -110,3 +108,28 @@ CREATE TABLE SystemSettings (
     LastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+CREATE TABLE Users (
+    ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+    ExternalID VARCHAR(50),
+    Name VARCHAR(100) NOT NULL,
+    Description TEXT,
+    Notes TEXT,
+    UserTypeID INTEGER,
+    Type INTEGER,
+    Login VARCHAR(50) NOT NULL UNIQUE,
+    Email VARCHAR(100) NOT NULL UNIQUE,
+    Locale VARCHAR(10),
+    IsAdministrator BOOLEAN DEFAULT 0,
+    IsAuditor BOOLEAN DEFAULT 0,
+    Enabled BOOLEAN DEFAULT 1,
+    ModifiedDateTime TIMESTAMP,
+    UploadedDateTime TIMESTAMP,
+    AltName VARCHAR(100),
+    SiteID INTEGER,
+    PasswordHash VARCHAR(255) NOT NULL,
+    AllowMultipleUserLogins BOOLEAN DEFAULT 0,
+    FailedLoginAttempts INTEGER DEFAULT 0,
+    PasswordUpdatedDateTime TIMESTAMP,
+    PasswordHistory TEXT,
+    Locked BOOLEAN DEFAULT 0
+);

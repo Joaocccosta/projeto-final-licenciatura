@@ -29,12 +29,12 @@ async function saveEvent(event) {
   // Verificar se já existe um evento com informações idênticas
   const [existingEvents] = await db.query(
     `SELECT EventID FROM EventDetails 
-     WHERE SystemName = ? 
+     WHERE SystemID = ? 
      AND EventCategoryID = ? 
      AND StartDateTime = ? 
      AND (Comments = ? OR (Comments IS NULL AND ? IS NULL))`,
     [
-      `${machineId}`,
+      machineId,
       eventTypeId,
       startDateTime,
       comment,
@@ -50,17 +50,14 @@ async function saveEvent(event) {
   // Inserir o evento na tabela EventDetails
   const [result] = await db.query(
     `INSERT INTO EventDetails 
-     (StartDateTime, SystemName, EventDefinitionName, 
-      EventCategoryID, State, IsActive, IsComplete, Comments) 
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+     (StartDateTime, SystemID, EventCategoryID, IsActive, IsComplete, Comments) 
+     VALUES (?, ?, ?, ?, ?, ?)`,
     [
       startDateTime,
-      `${machineId}`, // Nome do sistema baseado no ID da máquina
-      `${eventTypeId}`, // Nome da definição do evento baseado no tipo
+      machineId,
       eventTypeId,
-      1, // Estado inicial
-      0, // Ativo
-      1, // Não completo
+      1, // Ativo
+      0, // Não completo
       comment || null
     ]
   );
