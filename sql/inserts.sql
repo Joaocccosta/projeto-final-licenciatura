@@ -290,3 +290,74 @@ INSERT INTO EventDetails (
 ('2025-05-16 08:15:00', NULL, 3, 1, 1, 0, 'Limpeza do sistema'),
 ('2025-05-16 11:20:00', NULL, 1, 5, 1, 0, 'Substituição de peça'),
 ('2025-05-16 13:00:00', NULL, 4, 3, 1, 0, 'Verificação de temperatura');
+
+
+INSERT INTO ProductionOrders (OrderNumber, dateStart, dateEnd, MachineID) VALUES
+('ORD0020', '2025-05-20 16:00:00', '2025-05-30 00:00:00', 1),
+('ORD0021', '2025-05-20 00:00:00', '2025-05-30 08:00:00', 3),
+('ORD0022', '2025-05-20 08:00:00', '2025-05-30 16:00:00', 8),
+('ORD0023', '2025-05-20 08:00:00', '2025-05-30 16:00:00', 9);
+
+
+INSERT INTO ProductionIndicators (
+    ProductionOrderID, MachineID,
+    UnitsUnits, TargetUnits, UnitsBox10, TargetBox10, UnitsBox24, TargetBox24,
+    StateMainLine, StateBox10, StateBox24,
+    AvailabilityUnits, PerformanceUnits, QualityUnits, OeeUnits,
+    AvailabilityBox10, PerformanceBox10, QualityBox10, OeeBox10,
+    AvailabilityBox24, PerformanceBox24, QualityBox24, OeeBox24
+) VALUES
+(15, 1, 20000, 30000, 600, 1000, 800, 1000, 1, 1, 0, 94.0, 91.0, 97.0, 83.00, 93.0, 90.0, 96.0, 80.35, 92.0, 88.0, 95.0, 76.56),
+(16, 3, 5000, 20000, 550, 2000, 750, 1850, 1, 0, 1, 93.0, 89.0, 96.0, 79.50, 92.0, 87.0, 94.0, 75.07, 91.0, 85.0, 93.0, 72.01),
+(17, 8, 7000, 12000, NULL, NULL, NULL, NULL, 1, NULL, NULL, 90.0, 86.0, 93.0, 71.91, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(18, 9, 5000, 13000, NULL, NULL, NULL, NULL, 1, NULL, NULL, 91.0, 87.0, 94.0, 74.39, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+
+INSERT INTO HourlyProduction (ProductionIndicatorID, MachinePart, HourStart, ProducedUnits) VALUES
+(15, 'Capsules', '2025-05-20 08:00:00', 850),
+(15, 'Capsules', '2025-05-20 09:00:00', 920),
+(15, 'Capsules', '2025-05-20 10:00:00', 880),
+(15, 'Capsules', '2025-05-20 11:00:00', 910),
+(15, 'Capsules', '2025-05-20 12:00:00', 780),
+(15, 'Capsules', '2025-05-20 13:00:00', 860),
+(15, 'Box10', '2025-05-20 08:00:00', 85),
+(15, 'Box10', '2025-05-20 09:00:00', 92),
+(15, 'Box10', '2025-05-20 10:00:00', 88),
+(15, 'Box24', '2025-05-20 08:00:00', 35),
+(15, 'Box24', '2025-05-20 09:00:00', 38),
+(15, 'Box24', '2025-05-20 10:00:00', 36),
+
+-- Today's hourly production (ORD008 / DeltaQ5)
+(16, 'Capsules', '2025-05-20 08:00:00', 820),
+(16, 'Capsules', '2025-05-20 09:00:00', 840),
+(16, 'Capsules', '2025-05-20 10:00:00', 790),
+(16, 'Capsules', '2025-05-20 11:00:00', 760),
+(16, 'Capsules', '2025-05-20 12:00:00', 800),
+(16, 'Capsules', '2025-05-20 13:00:00', 790),
+(16, 'Box24', '2025-05-20 08:00:00', 33),
+(16, 'Box24', '2025-05-20 09:00:00', 35),
+(16, 'Box24', '2025-05-20 10:00:00', 32),
+
+-- Weekend hourly production (ORD010 / Rychiger 6)
+(17, 'Units', '2025-05-20 08:00:00', 1100),
+(17, 'Units', '2025-05-20 09:00:00', 1150),
+(17, 'Units', '2025-05-20 10:00:00', 1200),
+(17, 'Units', '2025-05-20 11:00:00', 1050),
+(17, 'Units', '2025-05-20 12:00:00', 1000),
+(17, 'Units', '2025-05-20 13:00:00', 1150),
+(17, 'Units', '2025-05-20 14:00:00', 1250),
+(17, 'Units', '2025-05-20 15:00:00', 1300),
+(17, 'Units', '2025-05-20 16:00:00', 1300),
+
+-- Next week production with high output (ORD012 / Goglio 1)
+(18, 'Units', '2025-05-20 08:00:00', 950),
+(18, 'Units', '2025-05-20 09:00:00', 980),
+(18, 'Units', '2025-05-20 10:00:00', 1020),
+(18, 'Units', '2025-05-20 11:00:00', 950),
+(18, 'Units', '2025-05-20 12:00:00', 900),
+(18, 'Units', '2025-05-20 13:00:00', 950),
+(18, 'Units', '2025-05-20 14:00:00', 980),
+(18, 'Units', '2025-05-20 15:00:00', 1000),
+(18, 'Units', '2025-05-20 16:00:00', 1050),
+(18, 'Units', '2025-05-20 17:00:00', 1100),
+(18, 'Units', '2025-05-20 18:00:00', 1120);
