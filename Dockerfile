@@ -1,23 +1,25 @@
 # Etapa de build do frontend
-FROM node:20 as frontend-builder
-WORKDIR /app/frontend
-COPY frontend/package*.json ./
+FROM node:20-alpine as frontend-builder
+WORKDIR /app/dashboard
+COPY dashboard/package*.json ./
 RUN npm install
-COPY frontend/ .
+COPY dashboard/ .
 RUN npm run build
 
 # Etapa final
-FROM node:20
+FROM node:20-alpine
 WORKDIR /app
 
 # Copia o backend
-COPY backend/ ./backend
-COPY backend/package*.json ./backend/
-RUN cd backend && npm install
+COPY api/ ./api
+COPY api/package*.json ./api/
+RUN cd api && npm install
 
 # Copia build do frontend para dentro do backend
-COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
+COPY --from=frontend-builder /app/dashboard/dist ./dashboard/dist
 
-# Define porta
-EXPOSE 3000
-CMD ["node", "backend/index.js"]
+# Define portas
+EXPOSE 3000 25565
+
+# Inicia o backend primeiro e mantém o container ativo
+CMD ["sh", "-c", "node api/index.js & tail -f /dev/null"]
