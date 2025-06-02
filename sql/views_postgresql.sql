@@ -49,13 +49,13 @@ FROM HourlyProduction hp;
 
       
 -- View para obter tipos de eventos (id e nome)
-CREATE VIEW vw_event_types AS
+CREATE VIEW view_event_types AS
 SELECT id, name 
 FROM event_types
 ORDER BY display_order, id;
 
 
-CREATE OR REPLACE VIEW unfinished_events AS
+CREATE OR REPLACE VIEW view_unfinished_events AS
 SELECT 
     ed.EventID, 
     et.name AS task_name,
@@ -65,6 +65,6 @@ FROM
 INNER JOIN 
     event_types et ON ed.EventCategoryID = et.id
 WHERE 
-    ed.IsComplete = 0
+    ed.IsComplete = FALSE
 ORDER BY 
     ed.StartDateTime DESC;

@@ -64,8 +64,8 @@ INSERT INTO EventDetails (
 	StartDateTime, EndDateTime, SystemID,
     EventCategoryID, IsActive, IsComplete, Comments
 ) VALUES
-('2025-05-10 16:30:00', '2025-05-10 17:00:00', 3, 3, 0, 1, 'Recarregar reservatório de café'),
-('2025-05-11 01:00:00', '2025-05-11 01:20:00', 4, 6, 1, 1, 'Afinação por variação de pressão');
+('2025-05-10 16:30:00', '2025-05-10 17:00:00', 3, 3, FALSE, TRUE, 'Recarregar reservatório de café'),
+('2025-05-11 01:00:00', '2025-05-11 01:20:00', 4, 6, TRUE, TRUE, 'Afinação por variação de pressão');
 
 INSERT INTO HourlyProduction (ProductionIndicatorID, MachinePart, HourStart, ProducedUnits) VALUES
 -- OR... SQLINES DEMO ***
@@ -99,24 +99,8 @@ INSERT INTO Users (
     AllowMultipleUserLogins, FailedLoginAttempts, PasswordUpdatedDateTime, Locked
 ) VALUES 
 (NULL, 'João Costa - ISEL', 'Desenvolvedor de software', NULL, NULL, 3, 'jcosta.isel', 'jcosta@isel.pt', 
- 'pt-PT', 1, 0, 1, 1, '$2a$12$q8AVCFJpLP8sqWGTb2EKGeKfFq2ZycJrLfG5hNK/grtYxS5V340wm', -- se... SQLINES DEMO ***
- 0, 0, '2025-04-10 16:54:46.000', 0),
-
-(NULL, 'Maria Silva', 'Engenheira de Produção', 'Responsável pela linha 1', NULL, 2, 'msilva', 'msilva@empresa.com', 
- 'pt-PT', 0, 0, 1, 1, '$2a$12$q8AVCFJpLP8sqWGTb2EKGeKfFq2ZycJrLfG5hNK/grtYxS5V340wm', 
- 0, 0, '2025-03-15 09:30:00.000', 0),
-
-(NULL, 'Carlos Santos', 'Operador', 'Operador da linha 2', NULL, 1, 'csantos', 'csantos@empresa.com', 
- 'pt-PT', 0, 0, 1, 1, '$2a$12$q8AVCFJpLP8sqWGTb2EKGeKfFq2ZycJrLfG5hNK/grtYxS5V340wm', 
- 0, 0, '2025-02-20 14:15:22.000', 0),
-
-(NULL, 'Ana Oliveira', 'Gerente de Qualidade', NULL, NULL, 2, 'aoliveira', 'aoliveira@empresa.com', 
- 'pt-PT', 0, 1, 1, 1, '$2a$12$q8AVCFJpLP8sqWGTb2EKGeKfFq2ZycJrLfG5hNK/grtYxS5V340wm', 
- 0, 0, '2025-01-05 10:45:30.000', 0),
-
-(NULL, 'Pedro Ferreira', 'Administrador de Sistemas', 'IT Support', NULL, 3, 'pferreira', 'pferreira@empresa.com', 
- 'pt-PT', 1, 0, 1, 1, '$2a$12$q8AVCFJpLP8sqWGTb2EKGeKfFq2ZycJrLfG5hNK/grtYxS5V340wm', 
- 1, 0, '2025-04-01 08:20:15.000', 0);
+ 'pt-PT', TRUE, FALSE, TRUE, 1, '$2a$12$q8AVCFJpLP8sqWGTb2EKGeKfFq2ZycJrLfG5hNK/grtYxS5V340wm', -- se... SQLINES DEMO ***
+FALSE, 0, '2025-04-10 16:54:46.000', FALSE);
 
 
  -- no... SQLINES DEMO ***
@@ -286,11 +270,11 @@ INSERT INTO EventDetails (
     EventCategoryID, IsActive, IsComplete, Comments
 ) VALUES
 -- SQLINES DEMO *** nto (não finalizados)
-('2025-05-15 09:30:00', NULL, 1, 2, 1, 0, 'Manutenção preventiva pendente'),
-('2025-05-15 14:45:00', NULL, 2, 4, 1, 0, 'Calibração necessária'),
-('2025-05-16 08:15:00', NULL, 3, 1, 1, 0, 'Limpeza do sistema'),
-('2025-05-16 11:20:00', NULL, 1, 5, 1, 0, 'Substituição de peça'),
-('2025-05-16 13:00:00', NULL, 4, 3, 1, 0, 'Verificação de temperatura');
+('2025-05-15 09:30:00', NULL, 1, 2, TRUE, FALSE, 'Manutenção preventiva pendente'),
+('2025-05-15 14:45:00', NULL, 2, 4, TRUE, FALSE, 'Calibração necessária'),
+('2025-05-16 08:15:00', NULL, 3, 1, TRUE, FALSE, 'Limpeza do sistema'),
+('2025-05-16 11:20:00', NULL, 1, 5, TRUE, FALSE, 'Substituição de peça'),
+('2025-05-16 13:00:00', NULL, 4, 3, TRUE, FALSE, 'Verificação de temperatura');
 
 
 INSERT INTO ProductionOrders (OrderNumber, dateStart, dateEnd, MachineID) VALUES
