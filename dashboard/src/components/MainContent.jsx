@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react"; // Add useCallback
+import { useEffect, useState, useRef, useCallback } from "react";
 import StateCard from './StateCard';
 import OrderCard from './OrderCard';
 import ProductionChartCard from './ProductionChartCard';
@@ -7,8 +7,8 @@ import GaugeCard from './GaugeCard';
 
 const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) => {
   const [linhas, setLinhas] = useState([]);
-  const mainContentRef = useRef(null); // Ref for the MainContent's root element
-  const [isFullscreen, setIsFullscreen] = useState(false); // Will be updated by event listener
+  const mainContentRef = useRef(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   
   // Se receber selectedLinha como prop, usar ela, senão manter state interno
   const [selectedLinha, setSelectedLinha] = useState(externalSelectedLinha || "");
@@ -378,6 +378,41 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
     else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
     else if (document.msExitFullscreen) document.msExitFullscreen();
   };
+
+  // Configurar WebSocket
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:8080'); // Substitua pela URL do WebSocket
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      console.log('WebSocket conectado');
+    };
+
+    ws.onmessage = (event) => {
+      const notification = JSON.parse(event.data);
+      console.log('Notificação recebida:', notification);
+
+      // Fazer um novo fetch ao receber uma notificação
+      if (selectedLinha) {
+        console.log('Atualizando dados devido à notificação...');
+        fetch(`/api/getoee/${selectedLinha}`)
+          .then((res) => res.json())
+          .then((data) => {
+            console.log('Dados atualizados:', data);
+            setCardsData(data.cards || []);
+          })
+          .catch((err) => console.error('Erro ao atualizar dados:', err));
+      }
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket desconectado');
+    };
+
+    return () => {
+      ws.close(); // Fechar o WebSocket ao desmontar o componente
+    };
+  }, [selectedLinha]);
 
   return (
     <div ref={mainContentRef} className="pl-8 pt-4 pr-8 pb-4 relative h-full bg-white overflow-y-auto">
