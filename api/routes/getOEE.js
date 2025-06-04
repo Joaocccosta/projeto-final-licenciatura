@@ -10,26 +10,26 @@ const db = require('../db'); // Import your database connection
 async function getOEEValues(lineId) {
   try {
     // Buscar informações da máquina da view_estado_maquina
-    const [machineRows] = await db.query(
-      'SELECT * FROM view_estado_maquina WHERE MachineID = ?',
+    const machineResult = await db.query(
+      'SELECT * FROM "view_estado_maquina" WHERE "MachineID" = $1',
       [lineId]
     );
 
-    if (machineRows.length === 0) {
+    if (machineResult.rows.length === 0) {
       throw new Error(`Máquina com ID ${lineId} não encontrada`);
     }
 
-    const machineData = machineRows[0];
+    const machineData = machineResult.rows[0];
     
     // Buscar dados de produção por hora, se houver um indicador de produção
     let hourlyProduction = [];
     if (machineData.ProductionIndicatorID) {
-      const [hourlyRows] = await db.query(
-        'SELECT * FROM view_producao_por_hora_indicador WHERE ProductionIndicatorID = ? ORDER BY HourStart',
+      const hourlyResult = await db.query(
+        'SELECT * FROM "view_producao_por_hora_indicador" WHERE "ProductionIndicatorID" = $1 ORDER BY "HourStart"',
         [machineData.ProductionIndicatorID]
       );
       
-      hourlyProduction = hourlyRows;
+      hourlyProduction = hourlyResult.rows;
     }
 
     // Construir objeto de resultado com todos os dados necessários

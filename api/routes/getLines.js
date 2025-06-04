@@ -5,10 +5,9 @@ const db = require('../db'); // Importa a conexão à base de dados
 // Função para buscar as linhas da base de dados usando a view
 async function getLinesFromDatabase() {
   try {
-    // Assume que a view tem colunas como 'id' e 'nome' ou similar
-    // Ajusta o nome das colunas conforme a tua view 'vw_maquinas_info'
-    const [rows] = await db.query('SELECT * FROM view_maquinas_id_nome;'); // Seleciona as colunas necessárias da view
-    return rows; // Retorna as linhas encontradas
+    // Ajusta o nome das colunas conforme a tua view 'view_maquinas_id_nome'
+    const result = await db.query('SELECT * FROM "view_maquinas_id_nome";'); // Seleciona as colunas necessárias da view
+    return result.rows; // PostgreSQL retorna os resultados em `rows`
   } catch (error) {
     console.error('Database error fetching lines:', error);
     throw new Error('Error fetching lines from database'); // Lança um erro para ser capturado no route handler

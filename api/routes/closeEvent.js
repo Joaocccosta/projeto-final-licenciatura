@@ -20,12 +20,12 @@ router.post('/', async (req, res) => {
     }
 
     // Verificar se o evento existe e obter data de início
-    const [eventData] = await db.query(
-      'SELECT EventID, StartDateTime FROM EventDetails WHERE EventID = ?',
+    const eventData = await db.query(
+      'SELECT "EventID", "StartDateTime" FROM "EventDetails" WHERE "EventID" = $1',
       [eventId]
     );
     
-    if (eventData.length === 0) {
+    if (eventData.rows.length === 0) {
       return res.status(404).json({ 
         success: false,
         message: 'Evento não encontrado' 
@@ -38,11 +38,11 @@ router.post('/', async (req, res) => {
     
     // Atualizar o evento para finalizado e desativado
     await db.query(
-      `UPDATE EventDetails 
-       SET EndDateTime = ?, 
-           IsComplete = 1,
-           IsActive = 0
-       WHERE EventID = ?`,
+      `UPDATE "EventDetails" 
+       SET "EndDateTime" = $1, 
+           "IsComplete" = 1,
+           "IsActive" = 0
+       WHERE "EventID" = $2`,
       [formattedDate, eventId]
     );
 

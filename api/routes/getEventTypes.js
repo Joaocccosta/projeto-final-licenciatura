@@ -3,8 +3,8 @@ const router = express.Router();
 const db = require('../db');
 
 async function getEventTypes() {
-  const [rows] = await db.query('SELECT * FROM vw_event_types');
-  return rows;
+  const result = await db.query('SELECT * FROM "view_event_types"'); // Ajuste para PostgreSQL
+  return result.rows; // PostgreSQL retorna os resultados em `rows`
 }
 
 router.get('/', async (req, res) => {
