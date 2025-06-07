@@ -289,7 +289,7 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
               <div className="space-y-4">
                 {activeEvents.map((event) => (
                   <div 
-                    key={event.EventID} 
+                    key={event.eventid} 
                     className="bg-gray-700 rounded-lg p-3 relative"
                   >
                     <div className="mb-2 flex items-center justify-between">
@@ -297,7 +297,7 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
                         {event.task_name || 'Evento sem nome'}
                       </div>
                       <button 
-                        onClick={() => handleCloseEvent(event.EventID)}
+                        onClick={() => handleCloseEvent(event.eventid)}
                         className="bg-red-500 hover:bg-red-600 text-white p-1 rounded absolute top-2 right-2"
                         title="Fechar evento"
                       >
@@ -311,7 +311,7 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
                     {/* Exibição da data e hora de início */}
                     <div className="text-sm text-gray-300 flex items-center">
                       <Clock size={14} className="mr-1" />
-                      <span>Início: {formatTimestamp(event.StartDateTime)}</span>
+                      <span>Início: {formatTimestamp(event.startdatetime)}</span>
                     </div>
                   </div>
                 ))}

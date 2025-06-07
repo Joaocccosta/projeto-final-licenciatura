@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
     // Buscar usuário no banco de dados
     const user = await userService.findUserByLogin(username);
     
-    if (!user || user.Enabled !== 1) {
+    if (!user || user.enabled !== true) {
       return res.status(401).json({ 
         success: false, 
         message: 'Usuário inválido ou desativado' 
@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
     }
     
     // Verificar se conta está bloqueada
-    if (user.Locked === 1) {
+    if (user.locked === true) {
       return res.status(401).json({ 
         success: false, 
         message: 'Conta bloqueada. Entre em contato com o administrador.' 
@@ -37,11 +37,11 @@ router.post('/', async (req, res) => {
     }
     
     // Verificar hash da senha
-    const passwordMatch = await bcrypt.compare(password, user.PasswordHash);
+    const passwordMatch = await bcrypt.compare(password, user.passwordhash);
     
     if (!passwordMatch) {
       // Incrementar tentativas de login falhas
-      await userService.incrementFailedLoginAttempts(user.ID);
+      await userService.incrementFailedLoginAttempts(user.id);
       
       return res.status(401).json({ 
         success: false, 
@@ -50,33 +50,33 @@ router.post('/', async (req, res) => {
     }
     
     // Reset failed login attempts
-    if (user.FailedLoginAttempts > 0) {
-      await userService.resetFailedLoginAttempts(user.ID);
+    if (user.failedloginattempts > 0) {
+      await userService.resetFailedLoginAttempts(user.id);
     }
     
     // Criar payload do token JWT
     const tokenPayload = {
-      userId: user.ID,
-      username: user.Login,
-      isAdmin: user.IsAdministrator === 1,
-      isAuditor: user.IsAuditor === 1
+      userId: user.id,
+      username: user.login,
+      isAdmin: user.isadministrator === true,
+      isAuditor: user.isauditor === true
     };
     
     // Gerar token JWT (expiração em 8 horas)
     const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '8h' });
     
     // Atualizar último login
-    await userService.updateLastLogin(user.ID);
+    await userService.updateLastLogin(user.id);
     
     // Responder com sucesso e token
     return res.json({
       success: true, 
       token,
       user: {
-        id: user.ID,
-        name: user.Name,
-        isAdmin: user.IsAdministrator === 1,
-        email: user.Email
+        id: user.id,
+        name: user.name,
+        isAdmin: user.isadministrator === true,
+        email: user.email
       }
     });
   } catch (error) {

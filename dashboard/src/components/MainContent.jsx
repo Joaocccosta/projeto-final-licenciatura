@@ -21,9 +21,16 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
   }, [externalSelectedLinha, selectedLinha]);
 
   const [cardsData, setCardsData] = useState([]);
-  const [refreshTime, setRefreshTime] = useState(120); // Default 120 segundos
+  const [refreshTime, setRefreshTime] = useState(180); // Default 120 segundos
   const refreshIntervalRef = useRef(null);
   const [oeeData, setOeeData] = useState(null);
+  const wsRef = useRef(null);
+  const selectedLinhaRef = useRef(selectedLinha); // Criar uma referência para selectedLinha
+  
+  // Atualizar a referência sempre que selectedLinha mudar
+  useEffect(() => {
+    selectedLinhaRef.current = selectedLinha;
+  }, [selectedLinha]);
 
   // Buscar o tempo de refresh da API quando o componente montar
   useEffect(() => {
@@ -392,16 +399,9 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
       const notification = JSON.parse(event.data);
       console.log('Notificação recebida:', notification);
 
-      // Fazer um novo fetch ao receber uma notificação
-      if (selectedLinha) {
-        console.log('Atualizando dados devido à notificação...');
-        fetch(`/api/getoee/${selectedLinha}`)
-          .then((res) => res.json())
-          .then((data) => {
-            console.log('Dados atualizados:', data);
-            setCardsData(data.cards || []);
-          })
-          .catch((err) => console.error('Erro ao atualizar dados:', err));
+      // Usar a referência para acessar o valor mais recente de selectedLinha
+      if (selectedLinhaRef.current) {
+        fetchData();
       }
     };
 
@@ -412,7 +412,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
     return () => {
       ws.close(); // Fechar o WebSocket ao desmontar o componente
     };
-  }, [selectedLinha]);
+  }, []); // Array de dependências vazio para configurar o WebSocket apenas uma vez
 
   return (
     <div ref={mainContentRef} className="pl-8 pt-4 pr-8 pb-4 relative h-full bg-white overflow-y-auto">

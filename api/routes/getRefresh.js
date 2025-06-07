@@ -6,9 +6,9 @@ const db = require('../db'); // Import your database connection
 async function getRefreshValue() {
   try {
     const result = await db.query(
-      `SELECT "SettingValue"::INT AS refresh_interval_seconds 
-       FROM "SystemSettings" 
-       WHERE "SettingKey" = 'refresh_interval_seconds'`
+      `SELECT "settingvalue"::INT AS refresh_interval_seconds 
+       FROM "systemsettings" 
+       WHERE "settingkey" = 'refresh_interval_seconds'`
     );
 
     if (result.rows.length === 0) {

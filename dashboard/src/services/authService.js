@@ -8,6 +8,7 @@ const authService = {
       });
 
       const data = await response.json();
+      console.log('Resposta do servidor:', data);
       
       if (data.success) {
         localStorage.setItem('token', data.token);

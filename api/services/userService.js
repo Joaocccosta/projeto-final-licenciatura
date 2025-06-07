@@ -6,15 +6,13 @@ const userService = {
   // Buscar usuário por login/username
   findUserByLogin: async (login) => {
     try {
-      // console.log('Attempting to use pool.execute in findUserByLogin');
-      const [rows] = await pool.execute(
-        'SELECT * FROM Users WHERE Login = ?', 
+      const result = await pool.query(
+        'SELECT * FROM users WHERE login = $1',
         [login]
       );
-      
-      return rows.length > 0 ? rows[0] : null;
+      return result.rows.length > 0 ? result.rows[0] : null;
     } catch (error) {
-      console.error('Erro ao buscar usuário:', error); // This is where your current error is caught
+      console.error('Erro ao buscar usuário:', error);
       throw error;
     }
   },
@@ -22,12 +20,11 @@ const userService = {
   // Buscar usuário por ID
   findUserById: async (id) => {
     try {
-      const [rows] = await pool.execute(
-        'SELECT * FROM Users WHERE ID = ?', 
+      const result = await pool.query(
+        'SELECT * FROM users WHERE id = $1',
         [id]
       );
-      
-      return rows.length > 0 ? rows[0] : null;
+      return result.rows.length > 0 ? result.rows[0] : null;
     } catch (error) {
       console.error('Erro ao buscar usuário por ID:', error);
       throw error;
@@ -37,12 +34,11 @@ const userService = {
   // Incrementar tentativas de login falhas
   incrementFailedLoginAttempts: async (userId) => {
     try {
-      const [result] = await pool.execute(
-        'UPDATE Users SET FailedLoginAttempts = FailedLoginAttempts + 1 WHERE ID = ?',
+      const result = await pool.query(
+        'UPDATE users SET failedloginattempts = failedloginattempts + 1 WHERE id = $1',
         [userId]
       );
-      
-      return { affected: result.affectedRows };
+      return { affected: result.rowCount };
     } catch (error) {
       console.error('Erro ao incrementar tentativas de login:', error);
       throw error;
@@ -52,12 +48,11 @@ const userService = {
   // Resetar tentativas de login falhas
   resetFailedLoginAttempts: async (userId) => {
     try {
-      const [result] = await pool.execute(
-        'UPDATE Users SET FailedLoginAttempts = 0 WHERE ID = ?',
+      const result = await pool.query(
+        'UPDATE users SET failedloginattempts = 0 WHERE id = $1',
         [userId]
       );
-      
-      return { affected: result.affectedRows };
+      return { affected: result.rowCount };
     } catch (error) {
       console.error('Erro ao resetar tentativas de login:', error);
       throw error;
@@ -68,13 +63,11 @@ const userService = {
   updateLastLogin: async (userId) => {
     try {
       const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
-      
-      const [result] = await pool.execute(
-        'UPDATE Users SET ModifiedDateTime = ? WHERE ID = ?',
+      const result = await pool.query(
+        'UPDATE users SET modifieddatetime = $1 WHERE id = $2',
         [now, userId]
       );
-      
-      return { affected: result.affectedRows };
+      return { affected: result.rowCount };
     } catch (error) {
       console.error('Erro ao atualizar último login:', error);
       throw error;

@@ -19,10 +19,10 @@ router.get('/', async (req, res) => {
 
     // Usar a view unfinished_events e juntar com EventDetails para filtrar por máquina
     const result = await db.query(`
-      SELECT ue."EventID", ue."task_name", ue."StartDateTime"
+      SELECT ue."eventid", ue."task_name", ue."startdatetime"
       FROM "view_unfinished_events" ue
-      JOIN "EventDetails" ed ON ue."EventID" = ed."EventID"
-      WHERE ed."SystemID" = $1
+      JOIN "eventdetails" ed ON ue."eventid" = ed."eventid"
+      WHERE ed."systemid" = $1
     `, [machineId]);
 
     return res.status(200).json({ 
