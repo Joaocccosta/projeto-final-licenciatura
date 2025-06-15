@@ -5,7 +5,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isGuest, setIsGuest] = useState(false); // New state for guest mode
+  const [isGuest, setIsGuest] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,8 +14,6 @@ export const AuthProvider = ({ children }) => {
       setUser(currentUser);
       setIsGuest(false);
     }
-    // If you want to persist guest state, you could use localStorage here too
-    // For now, guest state is not persisted across page reloads unless explicitly set
     setLoading(false);
   }, []);
 
@@ -39,7 +37,6 @@ export const AuthProvider = ({ children }) => {
     authService.logout(); // This clears localStorage for token and user
     setUser(null);
     setIsGuest(true);
-    // No need to return a promise if it's a synchronous state update
   };
 
   return (

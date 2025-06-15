@@ -47,7 +47,9 @@ SELECT
     hp.MachinePart,
     hp.HourStart,
     hp.ProducedUnits
-FROM HourlyProduction hp;
+FROM HourlyProduction hp
+WHERE hp.HourStart >= DATE_SUB(NOW(), INTERVAL 8 HOUR)
+  AND hp.HourStart < NOW();
 
       
 -- View para obter tipos de eventos (id e nome)

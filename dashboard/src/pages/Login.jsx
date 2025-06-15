@@ -10,14 +10,14 @@ const Login = () => {
   const [loading, setLoading] = useState(false); // For regular login
   const [guestLoading, setGuestLoading] = useState(false); // For guest login
   
-  const { login, loginAsGuest } = useAuth(); // Add loginAsGuest
+  const { login, loginAsGuest } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!username || !password) {
-      setError('Usuário e senha são obrigatórios');
+      setError('Username e password são obrigatórios');
       return;
     }
     
@@ -46,11 +46,9 @@ const Login = () => {
 
   const handleGuestLogin = () => {
     setGuestLoading(true);
-    setError(''); // Clear any previous errors
+    setError('');
     loginAsGuest();
     navigate('/dashboard'); // Navigate to dashboard after setting guest mode
-    // No need for finally block if loginAsGuest is synchronous and doesn't throw
-    // setGuestLoading(false); // Can be removed if navigation happens immediately
   };
 
   return (
@@ -73,7 +71,7 @@ const Login = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-              Usuário
+              Username
             </label>
             <input
               id="username"
@@ -88,7 +86,7 @@ const Login = () => {
           
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Senha
+              Password
             </label>
             <input
               id="password"
@@ -115,8 +113,8 @@ const Login = () => {
         <div className="mt-4">
           <button
             type="button"
-            onClick={handleGuestLogin} // Implement this function
-            disabled={loading || guestLoading} // Disable if any login is in progress
+            onClick={handleGuestLogin}
+            disabled={loading || guestLoading}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sky-500 hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-400 disabled:opacity-50"
           >
             {guestLoading ? 'Entrando como convidado...' : 'Entrar como convidado'}

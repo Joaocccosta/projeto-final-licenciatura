@@ -28,7 +28,6 @@ async function getOEEValues(lineId) {
         'SELECT * FROM view_producao_por_hora_indicador WHERE ProductionIndicatorID = ? ORDER BY HourStart',
         [machineData.ProductionIndicatorID]
       );
-      
       hourlyProduction = hourlyRows;
     }
 

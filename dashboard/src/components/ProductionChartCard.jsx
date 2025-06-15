@@ -19,6 +19,17 @@ ChartJS.register(
   Legend
 );
 
+// Função para traduzir os termos da API
+const traduzirTermo = (termo) => {
+  const mapeamento = {
+    'Capsules': 'Cápsulas',
+    'Units': 'Unidades',
+    // Box10 e Box24 permanecem inalterados
+  };
+  
+  return mapeamento[termo] || termo;
+};
+
 const ProductionChartCard = ({ hourlyProductionData }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const validItems = hourlyProductionData && hourlyProductionData.length > 0 ? hourlyProductionData : [];
@@ -28,11 +39,19 @@ const ProductionChartCard = ({ hourlyProductionData }) => {
     setIsLoaded(true);
   }, []);
 
-  // Definir horas fixas para o eixo X (das 08:00 às 20:00)
-  const fixedHours = [
-    '08:00', '09:00', '10:00', '11:00', '12:00', '13:00',
-    '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'
-  ];
+  // Gerar as últimas 8 horas dinamicamente
+  const generateLast8Hours = () => {
+    const now = new Date();
+    const hours = [];
+    for (let i = 7; i >= 0; i--) {
+      const date = new Date(now.getTime() - i * 60 * 60 * 1000);
+      const hour = date.getHours().toString().padStart(2, '0');
+      hours.push(`${hour}:00`);
+    }
+    return hours;
+  };
+
+  const fixedHours = generateLast8Hours();
 
   // Organizar dados por hora
   const dataByHour = {};
@@ -41,20 +60,27 @@ const ProductionChartCard = ({ hourlyProductionData }) => {
   validItems.forEach(item => {
     const hourKey = item.intervalo;
     partTypes.add(item.part);
-    
+
     if (!dataByHour[hourKey]) {
       dataByHour[hourKey] = {};
     }
-    
+
     dataByHour[hourKey][item.part] = item.produzido;
+  });
+
+  // Preencher horas ausentes com 0
+  fixedHours.forEach(hour => {
+    if (!dataByHour[hour]) {
+      dataByHour[hour] = {};
+    }
   });
 
   // Obter tipos de partes únicos
   const uniqueParts = Array.from(partTypes);
   if (uniqueParts.length === 0) {
-    uniqueParts.push('Unidades'); // Fallback para quando não há dados
+    uniqueParts.push('Units'); // Fallback para quando não há dados
   }
-  
+
   // Define cores mais vibrantes para cada tipo de parte
   const partColors = {
     'Capsules': 'rgba(255, 99, 132, 0.9)',  // Vermelho
@@ -66,7 +92,7 @@ const ProductionChartCard = ({ hourlyProductionData }) => {
 
   // Cria datasets para cada tipo de parte
   const datasets = uniqueParts.map(part => ({
-    label: part,
+    label: traduzirTermo(part), // Traduz o nome da parte aqui
     data: fixedHours.map(hour => {
       if (dataByHour[hour] && dataByHour[hour][part] !== undefined) {
         return dataByHour[hour][part];
@@ -167,7 +193,7 @@ const ProductionChartCard = ({ hourlyProductionData }) => {
     }
     totalsByPart[item.part] += item.produzido;
   });
-  
+
   // Calcular total geral
   const totalProduction = Object.values(totalsByPart).reduce((sum, count) => sum + count, 0);
 
@@ -193,7 +219,7 @@ const ProductionChartCard = ({ hourlyProductionData }) => {
               className="px-3 py-1 rounded-lg flex items-center" 
               style={{ backgroundColor: partColors[part]?.replace('0.9', '0.7') || 'rgba(153, 102, 255, 0.7)' }}
             >
-              <span className="text-xs font-semibold mr-1">{part}:</span>
+              <span className="text-xs font-semibold mr-1">{traduzirTermo(part)}:</span>
               <span className="font-bold">{count.toLocaleString()}</span>
             </div>
           ))}
