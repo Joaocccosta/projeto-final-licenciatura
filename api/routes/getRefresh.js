@@ -5,14 +5,18 @@ const db = require('../db'); // Import your database connection
 // Function to get refresh interval from database
 async function getRefreshValue() {
   try {
-    const [rows] = await db.query("SELECT SettingValue AS refresh_interval_seconds FROM SystemSettings WHERE SettingKey = 'refresh_interval_seconds'");
-    
-    if (rows.length === 0) {
+    const result = await db.query(
+      `SELECT "settingvalue"::INT AS refresh_interval_seconds 
+       FROM "systemsettings" 
+       WHERE "settingkey" = 'refresh_interval_seconds'`
+    );
+
+    if (result.rows.length === 0) {
       // Default value if not found in database
       return 30; // Default 30 seconds
     }
-    
-    return parseInt(rows[0].refresh_interval_seconds, 10);
+
+    return result.rows[0].refresh_interval_seconds;
   } catch (error) {
     console.error('Database error fetching refresh interval:', error);
     return 30; // Default fallback value

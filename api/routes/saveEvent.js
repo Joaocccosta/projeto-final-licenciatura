@@ -14,12 +14,12 @@ async function saveEvent(event) {
   const { machineId, eventTypeId, comment } = event;
   
   // Verificar se o tipo de evento existe
-  const [eventTypeRows] = await db.query(
-    'SELECT id FROM event_types WHERE id = ?', 
+  const eventTypeResult = await db.query(
+    'SELECT "id" FROM "event_types" WHERE "id" = $1', 
     [eventTypeId]
   );
   
-  if (eventTypeRows.length === 0) {
+  if (eventTypeResult.rows.length === 0) {
     throw new Error(`Tipo de evento inválido: ${eventTypeId}`);
   }
 
@@ -27,37 +27,36 @@ async function saveEvent(event) {
   const startDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
   
   // Verificar se já existe um evento com informações idênticas
-  const [existingEvents] = await db.query(
-    `SELECT EventID FROM EventDetails 
-     WHERE SystemID = ? 
-     AND EventCategoryID = ? 
-     AND StartDateTime = ? 
-     AND (Comments = ? OR (Comments IS NULL AND ? IS NULL))`,
+  const existingEventsResult = await db.query(
+    `SELECT "eventid" FROM "eventdetails" 
+     WHERE "systemid" = $1 
+     AND "eventcategoryid" = $2 
+     AND "startdatetime" = $3 
+     AND ("comments" = $4 OR ("comments" IS NULL AND $4 IS NULL))`,
     [
       machineId,
       eventTypeId,
       startDateTime,
-      comment,
       comment
     ]
   );
   
-  if (existingEvents.length > 0) {
+  if (existingEventsResult.rows.length > 0) {
     console.log('Evento duplicado detectado. Não foi inserido.');
     return false;
   }
   
   // Inserir o evento na tabela EventDetails
-  const [result] = await db.query(
-    `INSERT INTO EventDetails 
-     (StartDateTime, SystemID, EventCategoryID, IsActive, IsComplete, Comments) 
-     VALUES (?, ?, ?, ?, ?, ?)`,
+  await db.query(
+    `INSERT INTO "eventdetails" 
+     ("startdatetime", "systemid", "eventcategoryid", "isactive", "iscomplete", "comments") 
+     VALUES ($1, $2, $3, $4, $5, $6)`,
     [
       startDateTime,
       machineId,
       eventTypeId,
-      1, // Ativo
-      0, // Não completo
+      true, // Ativo
+      false, // Não completo
       comment || null
     ]
   );

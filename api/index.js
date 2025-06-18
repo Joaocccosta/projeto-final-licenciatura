@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('./notify_backend'); // Inicia o sistema de notificações
 const express = require("express");
 const path = require("path");
 

@@ -10,106 +10,108 @@ const db = require('../db'); // Import your database connection
 async function getOEEValues(lineId) {
   try {
     // Buscar informações da máquina da view_estado_maquina
-    const [machineRows] = await db.query(
-      'SELECT * FROM view_estado_maquina WHERE MachineID = ?',
+    const machineResult = await db.query(
+      'SELECT * FROM "view_estado_maquina" WHERE "machineid" = $1',
       [lineId]
     );
+  
 
-    if (machineRows.length === 0) {
+    if (machineResult.rows.length === 0) {
       throw new Error(`Máquina com ID ${lineId} não encontrada`);
     }
 
-    const machineData = machineRows[0];
+    const machineData = machineResult.rows[0];
     
     // Buscar dados de produção por hora, se houver um indicador de produção
     let hourlyProduction = [];
-    if (machineData.ProductionIndicatorID) {
-      const [hourlyRows] = await db.query(
-        'SELECT * FROM view_producao_por_hora_indicador WHERE ProductionIndicatorID = ? ORDER BY HourStart',
-        [machineData.ProductionIndicatorID]
+    if (machineData.productionindicatorid) {
+      const hourlyResult = await db.query(
+        'SELECT * FROM "view_producao_por_hora_indicador" WHERE "productionindicatorid" = $1 ORDER BY "hourstart"',
+        [machineData.productionindicatorid]
       );
-      hourlyProduction = hourlyRows;
+      
+      hourlyProduction = hourlyResult.rows;
     }
 
     // Construir objeto de resultado com todos os dados necessários
     const result = {
       machine: {
-        id: machineData.MachineID,
-        name: machineData.MachineName
+        id: machineData.machineid,
+        name: machineData.machinename
       },
       order: {
-        id: machineData.ProductionOrderID,
-        orderNumber: machineData.OrderNumber,
-        status: machineData.OrderStatus
+        id: machineData.productionorderid,
+        orderNumber: machineData.ordernumber,
+        status: machineData.orderstatus
       },
       production: {},
       oee: {},
       hourlyProduction: hourlyProduction.map(item => ({
-        part: item.MachinePart,
-        hourStart: item.HourStart,
-        units: item.ProducedUnits
+        part: item.machinepart,
+        hourStart: item.hourstart,
+        units: item.producedunits
       }))
     };
 
     // Verificar se é uma máquina de unidades ou de cápsulas+caixas
-    if (machineData.StateBox10 === null && machineData.StateBox24 === null) {
+    if (machineData.statebox10 === null && machineData.statebox24 === null) {
       // Máquina de unidades simples
       result.production.units = {
-        current: machineData.UnitsUnits || 0,
-        target: machineData.TargetUnits || 0,
-        state: machineData.StateMainLine
+        current: machineData.unitsunits || 0,
+        target: machineData.targetunits || 0,
+        state: machineData.statemainline
       };
-      
+
       result.oee.units = {
-        total: machineData.OeeUnits || 0,
-        availability: machineData.AvailabilityUnits || 0,
-        performance: machineData.PerformanceUnits || 0,
-        quality: machineData.QualityUnits || 0
+        total: parseFloat(machineData.oeeunits) || 0,
+        availability: parseFloat(machineData.availabilityunits) || 0,
+        performance: parseFloat(machineData.performanceunits) || 0,
+        quality: parseFloat(machineData.qualityunits) || 0
       };
     } else {
       // Máquina de cápsulas + caixas
       result.production.capsules = {
-        current: machineData.UnitsUnits || 0, // Usando UnitsUnits para cápsulas
-        target: machineData.TargetUnits || 0, // Usando TargetUnits para cápsulas
-        state: machineData.StateMainLine
+        current: machineData.unitsunits || 0,
+        target: machineData.targetunits || 0,
+        state: machineData.statemainline
       };
-      
+
       result.oee.capsules = {
-        total: machineData.OeeUnits || 0, // Usando OeeUnits para cápsulas
-        availability: machineData.AvailabilityUnits || 0, // Usando AvailabilityUnits para cápsulas
-        performance: machineData.PerformanceUnits || 0, // Usando PerformanceUnits para cápsulas
-        quality: machineData.QualityUnits || 0 // Usando QualityUnits para cápsulas
+        total: parseFloat(machineData.oeeunits) || 0,
+        availability: parseFloat(machineData.availabilityunits) || 0,
+        performance: parseFloat(machineData.performanceunits) || 0,
+        quality: parseFloat(machineData.qualityunits) || 0
       };
-      
+
       // Adicionar Box10 se existir
-      if (machineData.StateBox10 !== null) {
+      if (machineData.statebox10 !== null) {
         result.production.box10 = {
-          current: machineData.UnitsBox10 || 0,
-          target: machineData.TargetBox10 || 0,
-          state: machineData.StateBox10
+          current: machineData.unitsbox10 || 0,
+          target: machineData.targetbox10 || 0,
+          state: machineData.statebox10
         };
-        
+
         result.oee.box10 = {
-          total: machineData.OeeBox10 || 0,
-          availability: machineData.AvailabilityBox10 || 0,
-          performance: machineData.PerformanceBox10 || 0,
-          quality: machineData.QualityBox10 || 0
+          total: parseFloat(machineData.oeebox10) || 0,
+          availability: parseFloat(machineData.availabilitybox10) || 0,
+          performance: parseFloat(machineData.performancebox10) || 0,
+          quality: parseFloat(machineData.qualitybox10) || 0
         };
       }
       
       // Adicionar Box24 se existir
-      if (machineData.StateBox24 !== null) {
+      if (machineData.statebox24 !== null) {
         result.production.box24 = {
-          current: machineData.UnitsBox24 || 0,
-          target: machineData.TargetBox24 || 0,
-          state: machineData.StateBox24
+          current: machineData.unitsbox24 || 0,
+          target: machineData.targetbox24 || 0,
+          state: machineData.statebox24
         };
-        
+
         result.oee.box24 = {
-          total: machineData.OeeBox24 || 0,
-          availability: machineData.AvailabilityBox24 || 0,
-          performance: machineData.PerformanceBox24 || 0,
-          quality: machineData.QualityBox24 || 0
+          total: parseFloat(machineData.oeebox24) || 0,
+          availability: parseFloat(machineData.availabilitybox24) || 0,
+          performance: parseFloat(machineData.performancebox24) || 0,
+          quality: parseFloat(machineData.qualitybox24) || 0
         };
       }
     }

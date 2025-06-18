@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react"; // Add useCallback
+import { useEffect, useState, useRef, useCallback } from "react";
 import StateCard from './StateCard';
 import OrderCard from './OrderCard';
 import ProductionChartCard from './ProductionChartCard';
@@ -7,8 +7,8 @@ import GaugeCard from './GaugeCard';
 
 const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) => {
   const [linhas, setLinhas] = useState([]);
-  const mainContentRef = useRef(null); // Ref for the MainContent's root element
-  const [isFullscreen, setIsFullscreen] = useState(false); // Will be updated by event listener
+  const mainContentRef = useRef(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   
   // Se receber selectedLinha como prop, usar ela, senão manter state interno
   const [selectedLinha, setSelectedLinha] = useState(externalSelectedLinha || "");
@@ -21,9 +21,16 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
   }, [externalSelectedLinha, selectedLinha]);
 
   const [cardsData, setCardsData] = useState([]);
-  const [refreshTime, setRefreshTime] = useState(120); // Default 120 segundos
+  const [refreshTime, setRefreshTime] = useState(180); // Default 120 segundos
   const refreshIntervalRef = useRef(null);
   const [oeeData, setOeeData] = useState(null);
+  const wsRef = useRef(null);
+  const selectedLinhaRef = useRef(selectedLinha); // Criar uma referência para selectedLinha
+  
+  // Atualizar a referência sempre que selectedLinha mudar
+  useEffect(() => {
+    selectedLinhaRef.current = selectedLinha;
+  }, [selectedLinha]);
 
   // Buscar o tempo de refresh da API quando o componente montar
   useEffect(() => {
@@ -378,6 +385,34 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
     else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
     else if (document.msExitFullscreen) document.msExitFullscreen();
   };
+
+  // Configurar WebSocket
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:8080'); // Substitua pela URL do WebSocket
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      console.log('WebSocket conectado');
+    };
+
+    ws.onmessage = (event) => {
+      const notification = JSON.parse(event.data);
+      console.log('Notificação recebida:', notification);
+
+      // Usar a referência para acessar o valor mais recente de selectedLinha
+      if (selectedLinhaRef.current) {
+        fetchData();
+      }
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket desconectado');
+    };
+
+    return () => {
+      ws.close(); // Fechar o WebSocket ao desmontar o componente
+    };
+  }, []); // Array de dependências vazio para configurar o WebSocket apenas uma vez
 
   return (
     <div ref={mainContentRef} className="pl-8 pt-4 pr-8 pb-4 relative h-full bg-white overflow-y-auto">

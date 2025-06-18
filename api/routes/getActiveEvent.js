@@ -18,16 +18,16 @@ router.get('/', async (req, res) => {
     }
 
     // Usar a view unfinished_events e juntar com EventDetails para filtrar por máquina
-    const [rows] = await db.query(`
-      SELECT ue.EventID, ue.task_name, ue.StartDateTime
-      FROM unfinished_events ue
-      JOIN EventDetails ed ON ue.EventID = ed.EventID
-      WHERE ed.SystemID = ?
+    const result = await db.query(`
+      SELECT ue."eventid", ue."task_name", ue."startdatetime"
+      FROM "view_unfinished_events" ue
+      JOIN "eventdetails" ed ON ue."eventid" = ed."eventid"
+      WHERE ed."systemid" = $1
     `, [machineId]);
 
     return res.status(200).json({ 
       success: true,
-      events: rows 
+      events: result.rows // PostgreSQL retorna os resultados em `rows`
     });
   } catch (error) {
     console.error('Erro ao buscar eventos ativos:', error);
