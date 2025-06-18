@@ -338,6 +338,14 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
     setCardsData(newCards);
   }, [selectedLinha, linhas, setOeeData, setCardsData]); // Add dependencies for useCallback
 
+  // Adicione no topo do componente
+  const fetchDataRef = useRef(fetchData);
+
+  // Sempre que fetchData mudar, atualize a ref
+  useEffect(() => {
+    fetchDataRef.current = fetchData;
+  }, [fetchData]);
+
   // Configurar/limpar o intervalo quando a linha selecionada mudar
   useEffect(() => {
     // Limpar qualquer intervalo anterior
@@ -397,11 +405,10 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
 
     ws.onmessage = (event) => {
       const notification = JSON.parse(event.data);
-      console.log('Notificação recebida:', notification);
+      console.log('Notificação recebida!');
 
-      // Usar a referência para acessar o valor mais recente de selectedLinha
       if (selectedLinhaRef.current) {
-        fetchData();
+        fetchDataRef.current(); // Use a ref aqui!
       }
     };
 
