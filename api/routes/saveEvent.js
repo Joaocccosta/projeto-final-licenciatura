@@ -28,7 +28,7 @@ async function saveEvent(event) {
   
   // Verificar se já existe um evento com informações idênticas
   const existingEventsResult = await db.query(
-    `SELECT "eventiD" FROM "eventdetails" 
+    `SELECT "eventid" FROM "eventdetails" 
      WHERE "systemid" = $1 
      AND "eventcategoryid" = $2 
      AND "startdatetime" = $3 

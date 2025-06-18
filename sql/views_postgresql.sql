@@ -41,11 +41,13 @@ LEFT JOIN ProductionIndicators pi ON pi.ProductionOrderID = po.ID;
 
 CREATE OR REPLACE VIEW view_producao_por_hora_indicador AS
 SELECT
-    hp.ProductionIndicatorID,
-    hp.MachinePart,
-    hp.HourStart,
-    hp.ProducedUnits
-FROM HourlyProduction hp;
+    hp.productionindicatorid,
+    hp.machinepart,
+    hp.hourstart,
+    hp.producedunits
+FROM hourlyproduction hp
+WHERE hp.hourstart >= NOW() - INTERVAL '8 hours'
+  AND hp.hourstart < NOW();
 
       
 -- View para obter tipos de eventos (id e nome)
