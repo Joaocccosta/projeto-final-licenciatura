@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db'); // Import your database connection
+const db = require('../db'); // Importa o módulo de conexão com o banco de dados
 
 /**
  * Rota para obter eventos não finalizados por máquina
@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
 
     return res.status(200).json({ 
       success: true,
-      events: result.rows // PostgreSQL retorna os resultados em `rows`
+      events: result.rows
     });
   } catch (error) {
     console.error('Erro ao buscar eventos ativos:', error);

@@ -5,19 +5,18 @@ const GaugeCard = ({ title, current, target }) => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
   
-  // Ensure current and target are numbers
+  // Garantir que current e target são números
   const currentNum = Number(current) || 0;
-  const targetNum = Number(target) || 1; // Avoid division by zero
+  const targetNum = Number(target) || 1; // Evitar divisão por zero
   
-  // Calculate percentage (capped at 100%)
+  // Calcular percentagem (limitada a 100%)
   const percentage = Math.min((currentNum / targetNum) * 100, 100).toFixed(0);
   
   useEffect(() => {
-    // Initialize chart
+    // Inicializar o gráfico
     if (chartRef.current) {
       chartInstance.current = echarts.init(chartRef.current);
-      
-      // Clean up on unmount
+
       return () => {
         chartInstance.current && chartInstance.current.dispose();
       };
@@ -27,15 +26,15 @@ const GaugeCard = ({ title, current, target }) => {
   useEffect(() => {
     if (!chartInstance.current) return;
     
-    // Determine color based on percentage
-    let color = '#FF5F6D'; // Red for low progress
+    // Determinar cor com base na percentagem
+    let color = '#FF5F6D'; // Vermelho para progresso baixo
     if (percentage >= 70) {
-      color = '#2ECC71'; // Green for good progress
+      color = '#2ECC71'; // Verde para bom progresso
     } else if (percentage >= 40) {
-      color = '#FFC371'; // Yellow for medium progress
+      color = '#FFC371'; // Amarelo para progresso médio
     }
     
-    // Semi-circular progress chart options
+    // Opções do gráfico de progresso semicircular
     const option = {
       series: [{
         type: 'pie',
@@ -54,14 +53,14 @@ const GaugeCard = ({ title, current, target }) => {
         data: [
           { 
             value: percentage, 
-            name: 'Completed',
+            name: 'Concluído',
             itemStyle: {
               color: color
             }
           },
           { 
             value: 100 - percentage, 
-            name: 'Remaining',
+            name: 'Restante',
             itemStyle: {
               color: '#EAEAEA'
             }
@@ -78,7 +77,7 @@ const GaugeCard = ({ title, current, target }) => {
             fontSize: 26,
             fontWeight: 'bold',
             textAlign: 'center',
-            fill: '#FFFFFF' // Mudado para branco
+            fill: '#FFFFFF'
           }
         },
         {
@@ -90,7 +89,7 @@ const GaugeCard = ({ title, current, target }) => {
             fontSize: 20,
             fontWeight: 'normal',
             textAlign: 'center',
-            fill: 'rgba(255, 255, 255, 0.8)' // Mudado para branco com transparência
+            fill: 'rgba(255, 255, 255, 0.8)'
           }
         }
       ]
@@ -98,7 +97,6 @@ const GaugeCard = ({ title, current, target }) => {
     
     chartInstance.current.setOption(option);
     
-    // Handle resize
     const handleResize = () => {
       chartInstance.current && chartInstance.current.resize();
     };

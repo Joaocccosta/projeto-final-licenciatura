@@ -9,11 +9,12 @@ const Dashboard = () => {
   const [selectedLinha, setSelectedLinha] = useState("");
   const { user, isGuest } = useAuth();
 
+  // Alternar visibilidade da sidebar
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
   };
 
-  // Only show sidebar for authenticated users who are not guests
+  // Só mostrar a sidebar para utilizadores autenticados que não sejam convidados
   const showSidebar = user && !isGuest;
 
   return (

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db'); // Import your database connection
+const db = require('../db'); // Importa o módulo de conexão com o banco de dados
 
 router.use(express.json());
 

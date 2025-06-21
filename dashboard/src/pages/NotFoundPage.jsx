@@ -7,7 +7,7 @@ const NotFoundPage = () => {
       <h1 className="text-6xl font-bold mb-4">404</h1>
       <h2 className="text-2xl font-semibold mb-2">Página Não Encontrada</h2>
       <p className="mb-6 text-center">
-        Lamentamos, mas a página que você está procurando não existe <br />
+        Lamentamos, mas a página que você está à procura não existe <br />
         ou foi movida.
       </p>
       <Link

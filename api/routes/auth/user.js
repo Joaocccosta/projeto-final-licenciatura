@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    // Buscar dados atualizados do usuário
+    // Procurar dados atualizados do usuário
     const user = await userService.findUserById(req.user.userId);
     
     if (!user) {

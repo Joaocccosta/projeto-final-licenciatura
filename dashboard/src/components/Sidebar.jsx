@@ -14,7 +14,7 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
   const [loadingEvents, setLoadingEvents] = useState(false);
   const [eventsError, setEventsError] = useState(null);
 
-  // Fetch event types
+  // Buscar tipos de eventos
   useEffect(() => {
     const fetchEventTypes = async () => {
       setIsLoading(true);
@@ -46,7 +46,7 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
     fetchEventTypes();
   }, []);
 
-  // Fetch active events for the selected machine
+  // Buscar eventos ativos para a máquina selecionada
   const fetchActiveEvents = async () => {
     if (!selectedLinha) {
       setActiveEvents([]);
@@ -79,14 +79,14 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
     }
   };
 
-  // Initial fetch of active events and refresh when sidebar is visible or selected machine changes
+  // Buscar eventos ativos ao abrir a sidebar ou mudar a linha selecionada
   useEffect(() => {
     if (visible && selectedLinha) {
       fetchActiveEvents();
     }
   }, [visible, selectedLinha, submitSuccess]);
 
-  // Clear success/error messages after a timeout
+  // Limpar mensagens de sucesso/erro após um tempo
   useEffect(() => {
     if (submitSuccess || submitError) {
       const timer = setTimeout(() => {
@@ -99,14 +99,14 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
   }, [submitSuccess, submitError]);
 
   const handleSubmit = async () => {
-    // Verify required fields
+    // Verificar campos obrigatórios
     if (!selectedEventType) {
       alert("Por favor, selecione um tipo de evento.");
       return;
     }
 
     if (!selectedLinha) {
-      alert("Por favor, selecione uma linha antes de registrar um evento.");
+      alert("Por favor, selecione uma linha antes de registar um evento.");
       return;
     }
 
@@ -130,27 +130,27 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Erro ao salvar evento");
+        throw new Error(data.message || "Erro ao guardar evento");
       }
 
-      console.log("Evento registrado com sucesso:", data);
+      console.log("Evento registado com sucesso:", data);
       setSubmitSuccess(true);
       
-      // Reset fields after successful submission
+      // Limpar campos após submissão bem-sucedida
       setComment("");
       setSelectedEventType("");
       
-      // Refresh the active events list
+      // Atualizar lista de eventos ativos
       fetchActiveEvents();
     } catch (error) {
-      console.error("Erro ao salvar evento:", error);
-      setSubmitError(error.message || "Erro ao salvar evento");
+      console.error("Erro ao guardar evento:", error);
+      setSubmitError(error.message || "Erro ao guardar evento");
     } finally {
       setSubmitting(false);
     }
   };
 
-  // Handle closing an event
+  // Fechar um evento ativo
   const handleCloseEvent = async (eventId) => {
     try {
       const response = await fetch("/api/closeevent", {
@@ -171,7 +171,7 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
 
       console.log("Evento fechado com sucesso:", data);
       
-      // Refresh the active events list
+      // Atualizar lista de eventos ativos
       fetchActiveEvents();
     } catch (error) {
       console.error("Erro ao fechar evento:", error);
@@ -179,7 +179,7 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
     }
   };
 
-  // Format timestamp for display
+  // Formatar timestamp para exibição
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return "N/A";
     const date = new Date(timestamp);
@@ -202,19 +202,19 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
 
       {visible && (
         <div className="p-4 overflow-y-auto h-full flex flex-col">
-          {/* Add event section */}
+          {/* Secção para adicionar evento */}
           <div className="mb-6">
             <h2 className="text-lg font-semibold mb-4">Adicionar evento</h2>
 
             {!selectedLinha && (
               <div className="p-2 bg-yellow-600 text-white rounded mb-4">
-                Selecione uma linha para registrar um evento
+                Selecione uma linha para registar um evento
               </div>
             )}
 
             {submitSuccess && (
               <div className="p-2 bg-green-600 text-white rounded mb-4">
-                Evento registrado com sucesso!
+                Evento registado com sucesso!
               </div>
             )}
 
@@ -235,7 +235,7 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
 
             <label className="block mt-4 mb-2 text-sm">Tipo de incidente</label>
             {isLoading ? (
-              <div className="py-2 text-gray-400">Carregando tipos de eventos...</div>
+              <div className="py-2 text-gray-400">A carregar tipos de eventos...</div>
             ) : error ? (
               <div className="py-2 text-red-400">{error}</div>
             ) : (
@@ -264,14 +264,14 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
               onClick={handleSubmit}
               disabled={!selectedEventType || !selectedLinha || submitting}
             >
-              {submitting ? "Enviando..." : "Confirmar"}
+              {submitting ? "A enviar..." : "Confirmar"}
             </button>
           </div>
 
-          {/* Divider */}
+          {/* Separador */}
           <div className="border-t border-gray-600 my-6"></div>
 
-          {/* Active events section */}
+          {/* Secção de eventos ativos */}
           <div className="mt-4">
             <h2 className="text-lg font-semibold mb-4">
               Eventos ativos {selectedLinha ? `da linha selecionada` : ''}
@@ -280,7 +280,7 @@ const Sidebar = ({ visible, toggle, selectedLinha }) => {
             {!selectedLinha ? (
               <div className="py-2 text-yellow-400">Selecione uma linha para ver os eventos ativos</div>
             ) : loadingEvents ? (
-              <div className="py-2 text-gray-400">Carregando eventos ativos...</div>
+              <div className="py-2 text-gray-400">A carregar eventos ativos...</div>
             ) : eventsError ? (
               <div className="py-2 text-red-400">{eventsError}</div>
             ) : activeEvents.length === 0 ? (

@@ -3,20 +3,22 @@ import { useAuth } from '../contexts/AuthContext';
 import logo from '../assets/logo.png';
 
 const Header = () => {
-  const { user, logout, isAuthenticated, isGuest } = useAuth(); // Add isGuest
+  const { user, logout, isAuthenticated, isGuest } = useAuth(); // Adiciona isGuest
   const navigate = useNavigate();
 
+  // Redirecionar para login
   const handleLoginRedirect = () => {
-    // If logging in from guest mode, ensure guest mode is turned off by AuthContext's logout or login
+    // Se estiver em modo convidado, garantir que o modo convidado é desligado pelo logout do AuthContext
     if (isGuest) {
-        logout(); // This will set isGuest to false
+        logout(); // Isto vai definir isGuest como falso
     }
     navigate('/login');
   };
 
+  // Fazer logout e redirecionar para login
   const handleLogout = async () => {
     await logout();
-    navigate('/login'); // After logout, always go to login page
+    navigate('/login'); // Após logout, vai sempre para a página de login
   };
 
   return (
@@ -24,7 +26,7 @@ const Header = () => {
       <img src={logo} alt="Logo" className="h-30" />
       
       <div className="flex items-center">
-        {isAuthenticated && user ? ( // Regular authenticated user
+        {isAuthenticated && user ? ( // Utilizador autenticado
           <div className="flex items-center gap-4">
             <span className="text-gray-700 font-medium">
               Olá, {user.name}
@@ -36,19 +38,19 @@ const Header = () => {
               Logout
             </button>
           </div>
-        ) : isGuest ? ( // Guest user
+        ) : isGuest ? ( // Utilizador convidado
           <div className="flex items-center gap-4">
             <span className="text-gray-700 font-medium">
               Modo Convidado
             </span>
             <button
-              onClick={handleLoginRedirect} // Button to go to the login page
+              onClick={handleLoginRedirect} // Botão para ir para a página de login
               className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition-colors"
             >
               Login
             </button>
           </div>
-        ) : ( // Not authenticated and not a guest (e.g., initial state before any action on login page, though this state might not be hit if on dashboard)
+        ) : ( // Não autenticado e não convidado (ex: estado inicial antes de qualquer ação na página de login)
           <button
             onClick={handleLoginRedirect}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors"

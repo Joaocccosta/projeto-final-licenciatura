@@ -10,7 +10,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
   const mainContentRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   
-  // Se receber selectedLinha como prop, usar ela, senão manter state interno
+  // Se receber selectedLinha como prop, usar essa, senão manter o state interno
   const [selectedLinha, setSelectedLinha] = useState(externalSelectedLinha || "");
   
   // Sincronizar o state interno com o externo quando mudar
@@ -21,7 +21,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
   }, [externalSelectedLinha, selectedLinha]);
 
   const [cardsData, setCardsData] = useState([]);
-  const [refreshTime, setRefreshTime] = useState(180); // Default 120 segundos
+  const [refreshTime, setRefreshTime] = useState(180); // Valor por defeito: 180 segundos
   const refreshIntervalRef = useRef(null);
   const [oeeData, setOeeData] = useState(null);
   const wsRef = useRef(null);
@@ -32,11 +32,11 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
     selectedLinhaRef.current = selectedLinha;
   }, [selectedLinha]);
 
-  // Buscar o tempo de refresh da API quando o componente montar
+  // Buscar o tempo de refresh da API e as linhas quando o componente montar
   useEffect(() => {
     fetch("/api/getRefresh")
       .then((res) => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        if (!res.ok) throw new Error(`Erro HTTP! status: ${res.status}`);
         return res.json();
       })
       .then((data) => {
@@ -44,7 +44,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
           console.log(`Tempo de refresh obtido: ${data.refreshSeconds} segundos`);
           setRefreshTime(data.refreshSeconds);
         } else {
-          console.warn("Formato inesperado da API (getRefresh), usando padrão:", data);
+          console.warn("Formato inesperado da API (getRefresh), a usar valor por defeito:", data);
         }
       })
       .catch((err) => {
@@ -53,7 +53,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
 
     fetch("/api/getlines")
       .then((res) => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        if (!res.ok) throw new Error(`Erro HTTP! status: ${res.status}`);
         return res.json();
       })
       .then((data) => {
@@ -70,7 +70,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
       });
 
     const handleFullscreenChange = () => {
-      // Check if the fullscreen element is our mainContentRef's current element
+      // Verificar se o elemento em fullscreen é o mainContentRef
       setIsFullscreen(document.fullscreenElement === mainContentRef.current);
     };
     document.addEventListener("fullscreenchange", handleFullscreenChange);
@@ -78,8 +78,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
     document.addEventListener("mozfullscreenchange", handleFullscreenChange);
     document.addEventListener("MSFullscreenChange", handleFullscreenChange);
     
-    // Initial check in case component mounts into a fullscreen state
-    // (e.g. after a refresh while already fullscreen)
+    // Verificação inicial caso o componente monte já em fullscreen
     if (mainContentRef.current && document.fullscreenElement === mainContentRef.current) {
         setIsFullscreen(true);
     }
@@ -95,7 +94,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
         clearInterval(refreshIntervalRef.current);
       }
     };
-  }, []); // Empty dependency array ensures this runs once on mount and cleans up on unmount
+  }, []); // Array de dependências vazio garante que só corre no mount/unmount
 
   // Função para buscar dados da API
   const fetchData = useCallback(async () => {
@@ -104,7 +103,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
     const machine = linhas.find(l => String(l.id) === selectedLinha);
     if (!machine) return;
 
-    console.log(`Atualizando dados para: ${machine.name}, Tipo: ${machine.tipo}`);
+    console.log(`A atualizar dados para: ${machine.name}, Tipo: ${machine.tipo}`);
 
     const newCards = [];
     let hourlyProductionData = [];
@@ -120,13 +119,13 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
       const oeeResult = await oeeResponse.json();
       
       if (!oeeResult.success) {
-        throw new Error(`API retornou erro: ${oeeResult.message}`);
+        throw new Error(`API devolveu erro: ${oeeResult.message}`);
       }
       
       const data = oeeResult.data;
       setOeeData(data);
       
-      // 1. Order Card
+      // 1. Card de Ordem
       if (data.order && data.order.orderNumber) {
         newCards.push({
           type: 'order',
@@ -143,7 +142,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
         });
       }
       
-      // 2. State Cards
+      // 2. Cards de Estado
       const production = data.production || {};
       
       // Determinar tipo de máquina a partir dos dados
@@ -183,7 +182,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
         }
       }
 
-      // 2.5 Gauge Cards para mostrar progresso de produção
+      // 2.5 Cards Gauge para mostrar progresso de produção
       if (production.units) {
         // Máquina de unidades simples
         newCards.push({
@@ -224,12 +223,12 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
         }
       }
       
-      // 3. OEE Cards (Indicadores)
+      // 3. Cards OEE (Indicadores)
       const oee = data.oee || {};
 
       // Função auxiliar para processar o valor OEE
       const processOeeValue = (value) => {
-        // Se for uma string (como "83.00"), converter para número
+        // Se for uma string (ex: "83.00"), converter para número
         if (typeof value === 'string') {
           return Math.min(parseFloat(value), 100);
         }
@@ -248,7 +247,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
           id: `${machine.id}-oee-units`,
           title: 'OEE Unidades',
           percentage: processOeeValue(oee.units.total),
-          expected: 75 // Valor esperado padrão
+          expected: 75 // Valor esperado por defeito
         });
       } else if (oee.capsules) {
         // Para máquinas de cápsulas
@@ -289,17 +288,17 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
             // Se for um formato ISO completo (2025-05-12T08:00:00)
             if (item.hourStart.includes('T')) {
               const timePart = item.hourStart.split('T')[1];
-              timeInterval = timePart.substring(0, 5); // Pegar apenas HH:MM
+              timeInterval = timePart.substring(0, 5); // Só HH:MM
             } 
             // Se for apenas hora (08:00:00)
             else if (item.hourStart.includes(':')) {
-              timeInterval = item.hourStart.substring(0, 5); // Pegar apenas HH:MM
+              timeInterval = item.hourStart.substring(0, 5); // Só HH:MM
             }
             // Caso seja formato com data+hora (2025-05-10 16:00:00)
             else if (item.hourStart.includes('-') && item.hourStart.includes(' ')) {
               const parts = item.hourStart.split(' ');
               if (parts.length > 1) {
-                timeInterval = parts[1].substring(0, 5); // Pegar apenas HH:MM
+                timeInterval = parts[1].substring(0, 5); // Só HH:MM
               }
             }
             // Caso contrário, usar como está
@@ -327,7 +326,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
       });
     }
     
-    // 5. Production Chart Card - sempre adicionar, mesmo que vazio
+    // 5. Card de Gráfico de Produção - adicionar sempre, mesmo que vazio
     newCards.push({
       type: 'productionChart',
       id: `${machine.id}-hourly-prod-chart`,
@@ -336,12 +335,12 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
     
     // Atualizar os cards
     setCardsData(newCards);
-  }, [selectedLinha, linhas, setOeeData, setCardsData]); // Add dependencies for useCallback
+  }, [selectedLinha, linhas, setOeeData, setCardsData]); // Dependências para o useCallback
 
-  // Adicione no topo do componente
+  // Guardar a referência mais recente de fetchData
   const fetchDataRef = useRef(fetchData);
 
-  // Sempre que fetchData mudar, atualize a ref
+  // Sempre que fetchData mudar, atualizar a ref
   useEffect(() => {
     fetchDataRef.current = fetchData;
   }, [fetchData]);
@@ -356,7 +355,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
 
     // Limpar os dados se nenhuma linha estiver selecionada
     if (!selectedLinha) {
-      setCardsData([]); // This setCardsData is fine here
+      setCardsData([]);
       return;
     }
 
@@ -365,7 +364,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
     
     // Configurar um novo intervalo se uma linha estiver selecionada
     if (selectedLinha) {
-      console.log(`Configurando auto-refresh a cada ${refreshTime} segundos`);
+      console.log(`A configurar auto-refresh a cada ${refreshTime} segundos`);
       refreshIntervalRef.current = setInterval(fetchData, refreshTime * 1000);
     }
 
@@ -375,7 +374,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
         clearInterval(refreshIntervalRef.current);
       }
     };
-  }, [selectedLinha, refreshTime, linhas, fetchData]); // fetchData is now memoized
+  }, [selectedLinha, refreshTime, linhas, fetchData]); // fetchData está memoizado
 
   const handleRefresh = () => {
     fetchData(); // Atualiza os dados sem recarregar a página
@@ -396,7 +395,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
 
   // Configurar WebSocket
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8080'); // Substitua pela URL do WebSocket
+    const ws = new WebSocket('ws://localhost:8080'); // Substituir pela URL do WebSocket
     wsRef.current = ws;
 
     ws.onopen = () => {
@@ -408,7 +407,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
       console.log('Notificação recebida!');
 
       if (selectedLinhaRef.current) {
-        fetchDataRef.current(); // Use a ref aqui!
+        fetchDataRef.current(); // Usar a ref aqui!
       }
     };
 
@@ -429,7 +428,7 @@ const MainContent = ({ onLineaChange, selectedLinha: externalSelectedLinha }) =>
             <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
           </svg>
         </button>
-        <button onClick={!isFullscreen ? enterFullscreen : exitFullscreen} className="p-2 rounded hover:bg-gray-200 border border-black" title={!isFullscreen ? "Enter Fullscreen" : "Exit Fullscreen"}>
+        <button onClick={!isFullscreen ? enterFullscreen : exitFullscreen} className="p-2 rounded hover:bg-gray-200 border border-black" title={!isFullscreen ? "Entrar em Ecrã Inteiro" : "Sair do Ecrã Inteiro"}>
           {!isFullscreen ? (
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />

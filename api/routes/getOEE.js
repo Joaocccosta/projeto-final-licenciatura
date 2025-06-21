@@ -9,9 +9,9 @@ const db = require('../db'); // Import your database connection
  */
 async function getOEEValues(lineId) {
   try {
-    // Buscar informações da máquina da view_estado_maquina
+    // Buscar informações da máquina da view_machine_state
     const machineResult = await db.query(
-      'SELECT * FROM "view_estado_maquina" WHERE "machineid" = $1',
+      'SELECT * FROM "view_machine_state" WHERE "machineid" = $1',
       [lineId]
     );
   
@@ -26,7 +26,7 @@ async function getOEEValues(lineId) {
     let hourlyProduction = [];
     if (machineData.productionindicatorid) {
       const hourlyResult = await db.query(
-        'SELECT * FROM "view_producao_por_hora_indicador" WHERE "productionindicatorid" = $1 ORDER BY "hourstart"',
+        'SELECT * FROM "view_hourly_production" WHERE "productionindicatorid" = $1 ORDER BY "hourstart"',
         [machineData.productionindicatorid]
       );
       

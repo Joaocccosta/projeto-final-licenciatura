@@ -10,7 +10,7 @@ router.post('/', async (req, res) => {
   try {
     const { username, password } = req.body;
     
-    // Validação básica
+    // Validação básica dos campos
     if (!username || !password) {
       return res.status(400).json({ 
         success: false, 
@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
       });
     }
     
-    // Buscar usuário no banco de dados
+    // Procurar utilizador na base de dados
     const user = await userService.findUserByLogin(username);
     
     if (!user || user.enabled !== true) {
@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
       });
     }
     
-    // Verificar se conta está bloqueada
+    // Verificar se a conta está bloqueada
     if (user.locked === true) {
       return res.status(401).json({ 
         success: false, 
@@ -36,11 +36,11 @@ router.post('/', async (req, res) => {
       });
     }
     
-    // Verificar hash da senha
+    // Verificar password
     const passwordMatch = await bcrypt.compare(password, user.passwordhash);
     
     if (!passwordMatch) {
-      // Incrementar tentativas de login falhas
+      // Incrementa tentativas de login falhadas
       await userService.incrementFailedLoginAttempts(user.id);
       
       return res.status(401).json({ 
@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
       });
     }
     
-    // Reset failed login attempts
+    // Reset tentativas falhadas se necessário
     if (user.failedloginattempts > 0) {
       await userService.resetFailedLoginAttempts(user.id);
     }
@@ -62,13 +62,13 @@ router.post('/', async (req, res) => {
       isAuditor: user.isauditor === true
     };
     
-    // Gerar token JWT (expiração em 8 horas)
+    // Gerar token JWT (expira em 8 horas)
     const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '8h' });
     
-    // Atualizar último login
+    // Atualizar último login do utilizador
     await userService.updateLastLogin(user.id);
     
-    // Responder com sucesso e token
+    // Responder com sucesso, token e dados do utilizador
     return res.json({
       success: true, 
       token,

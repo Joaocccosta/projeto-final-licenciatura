@@ -7,12 +7,13 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // For regular login
-  const [guestLoading, setGuestLoading] = useState(false); // For guest login
+  const [loading, setLoading] = useState(false); // Para login normal
+  const [guestLoading, setGuestLoading] = useState(false); // Para login como convidado
   
   const { login, loginAsGuest } = useAuth();
   const navigate = useNavigate();
 
+  // Submeter formulário de login
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -28,7 +29,7 @@ const Login = () => {
       const result = await login(username, password);
       
       if (result.success) {
-        navigate('/dashboard'); // Navigate to dashboard on successful login
+        navigate('/dashboard'); // Navegar para o dashboard após login com sucesso
       } else {
         setError(result.message);
       }
@@ -44,11 +45,12 @@ const Login = () => {
     }
   };
 
+  // Login como convidado
   const handleGuestLogin = () => {
     setGuestLoading(true);
     setError('');
     loginAsGuest();
-    navigate('/dashboard'); // Navigate to dashboard after setting guest mode
+    navigate('/dashboard'); // Navegar para o dashboard após definir modo convidado
   };
 
   return (

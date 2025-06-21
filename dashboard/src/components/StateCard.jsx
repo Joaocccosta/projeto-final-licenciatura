@@ -1,14 +1,14 @@
 import React from 'react';
 
 const StateCard = ({ title, status }) => {
-  let bgGradient = 'from-gray-500 to-gray-600'; // Default gradient (gray)
-  let statusText = status || 'Indisponível'; // Default text
+  let bgGradient = 'from-gray-500 to-gray-600'; // Gradiente por defeito (cinzento)
+  let statusText = status || 'Indisponível'; // Texto por defeito
   let statusIcon = null;
 
-  // Map status values to correct states
+  // Mapear valores de estado para os estados corretos
   if (status === 'running' || status === 1 || status === '1') {
     bgGradient = 'from-green-500 to-green-700';
-    statusText = 'Running';
+    statusText = 'Em Funcionamento';
     statusIcon = (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
@@ -17,7 +17,7 @@ const StateCard = ({ title, status }) => {
     );
   } else if (status === 'stopped' || status === 0 || status === '0') {
     bgGradient = 'from-red-500 to-red-700';
-    statusText = 'Stopped';
+    statusText = 'Parada';
     statusIcon = (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
@@ -33,7 +33,7 @@ const StateCard = ({ title, status }) => {
     );
   }
 
-  // Don't render the card if title doesn't exist
+  // Não renderiza o card se o título não existir
   if (!title) {
     return null;
   }
@@ -45,7 +45,7 @@ const StateCard = ({ title, status }) => {
         {statusIcon}
         <p className="text-2xl font-bold">{statusText}</p>
       </div>
-      <div className="h-2"></div> {/* Empty space at bottom for balance */}
+      <div className="h-2"></div> {/* Espaço vazio em baixo para equilíbrio */}
     </div>
   );
 };

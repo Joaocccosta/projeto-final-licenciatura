@@ -5,21 +5,19 @@ const CircularProgressCard = ({ title, percentage, expected = 75 }) => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
   
-  // Ensure percentage is a valid number between 0 and 100
+  // Verifica se a percentagem é válida e ajusta para o intervalo de 0 a 100
   const validPercentage = isNaN(percentage) ? 0 : Math.min(Math.max(0, percentage), 100);
   const displayPercentage = validPercentage.toFixed(1); 
   const isOk = validPercentage >= expected;
   
-  // Define cores mais vibrantes
-  const primaryColor = isOk ? '#16a34a' : '#dc2626'; // Verde ou vermelho mais saturados
+  const primaryColor = isOk ? '#2ECC71' : '#dc2626'; // Verde ou vermelho mais saturados
   const gradientClass = 'from-blue-400 to-blue-600';
   
   useEffect(() => {
-    // Initialize chart
+    // Iniciar o chart
     if (chartRef.current) {
       chartInstance.current = echarts.init(chartRef.current);
-      
-      // Clean up on unmount
+
       return () => {
         chartInstance.current && chartInstance.current.dispose();
       };
@@ -29,7 +27,7 @@ const CircularProgressCard = ({ title, percentage, expected = 75 }) => {
   useEffect(() => {
     if (!chartInstance.current) return;
     
-    // Chart options
+    // Chart settings
     const option = {
       series: [
         {
@@ -42,7 +40,6 @@ const CircularProgressCard = ({ title, percentage, expected = 75 }) => {
           labelLine: {
             show: false
           },
-          // Disable hover emphasis effect
           emphasis: {
             disabled: true
           },
@@ -55,7 +52,7 @@ const CircularProgressCard = ({ title, percentage, expected = 75 }) => {
             { 
               value: 100 - validPercentage, 
               name: 'Remaining',
-              itemStyle: { color: 'rgba(30, 41, 59, 0.6)' } // Cinza azulado escuro
+              itemStyle: { color: 'rgba(111, 148, 207, 0.6)' }
             }
           ]
         }
@@ -69,7 +66,7 @@ const CircularProgressCard = ({ title, percentage, expected = 75 }) => {
             text: `${displayPercentage}%`,
             fontSize: 30,
             fontWeight: 'bold',
-            textFill: '#ffffff',
+            fill: '#fff', 
             textAlign: 'center',
             textVerticalAlign: 'middle'
           }
@@ -79,7 +76,6 @@ const CircularProgressCard = ({ title, percentage, expected = 75 }) => {
     
     chartInstance.current.setOption(option);
     
-    // Handle resize
     const handleResize = () => {
       chartInstance.current && chartInstance.current.resize();
     };

@@ -9,14 +9,12 @@ const PORT = process.env.PORT || 3000;
 // Middleware para processar JSON no body das requisições
 app.use(express.json());
 
-// api status endpoint
+// Endpoint para verificar o estado da API
 app.get('/api/status', (req, res) => {
   res.json({ message: 'API is running' });
 });
 
-// API Methods
-
-// Importing the routes from the routes folder
+// Importação das rotas da pasta routes
 const getlinesRouter = require('./routes/getLines.js');
 const getOEERouter = require('./routes/getOEE.js');
 const getEventTypesRouter = require('./routes/getEventTypes.js');
@@ -25,12 +23,12 @@ const getRefreshRouter = require('./routes/getRefresh.js');
 const closeEventRouter = require('./routes/closeEvent.js');
 const getActiveEventsRouter = require('./routes/getActiveEvent.js');
 
-// Auth routes
+// Rotas de autenticação
 const loginRouter = require('./routes/auth/login.js');
 const userRouter = require('./routes/auth/user.js');
 const logoutRouter = require('./routes/auth/logout.js');
 
-// Mounting the routers at their respective endpoints
+// Montar as rotas nos respetivos endpoints
 app.use('/api/getlines', getlinesRouter);
 app.use('/api/getoee', getOEERouter);
 app.use('/api/geteventtypes', getEventTypesRouter);
@@ -39,18 +37,18 @@ app.use('/api/getrefresh', getRefreshRouter);
 app.use('/api/closeevent', closeEventRouter);
 app.use('/api/getactiveevents', getActiveEventsRouter);
 
-// Mounting auth routes
+// Montar rotas de autenticação
 app.use('/api/auth/login', loginRouter);
 app.use('/api/auth/user', userRouter);
 app.use('/api/auth/logout', logoutRouter);
 
-// in case of error, send the error message
+// Middleware para tratamento de erros
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).send('Ocorreu um erro no servidor!');
 });
 
-// Beginning message
+// Mensagem de arranque do servidor
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Servidor a correr na porta ${PORT}`);
 });
